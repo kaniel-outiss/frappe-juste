@@ -19,31 +19,52 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          Invoke-WebRequest -Uri "https://www.autohotkey.com/download/ahk-v2.zip" -OutFile ahk.zip
-          Expand-Archive ahk.zip -DestinationPath ahk
-          gh release download --repo AutoHotkey/Ahk2Exe --pattern "*.zip" --output ahk2exe.zip
-          Expand-Archive ahk2exe.zip -DestinationPath ahk2exe
-          Get-ChildItem ahk, ahk2exe | Select-Object Name
+          $ErrorActionPreference = "Stop"
+          try {
+            $r = gh api repos/AutoHotkey/AutoHotkey/releases --jq '[.[] | select(.tag_name | startswith("v2.")) | select(.prerelease | not)][0] | .tag_name + " " + ([.assets[].name] | join(","))'
+            "AutoHotkey : $r"
+            $ver = ($r -split ' ')[0].TrimStart('v')
+            try { gh release download "v$ver" --repo AutoHotkey/AutoHotkey --pattern "AutoHotkey_*.zip" --output ahk.zip }
+            catch { Invoke-WebRequest -Uri "https://www.autohotkey.com/download/2.0/AutoHotkey_$ver.zip" -OutFile ahk.zip -UserAgent "Mozilla/5.0" }
+            if (-not (Test-Path ahk.zip)) { Invoke-WebRequest -Uri "https://www.autohotkey.com/download/2.0/AutoHotkey_$ver.zip" -OutFile ahk.zip -UserAgent "Mozilla/5.0" }
+            Expand-Archive ahk.zip -DestinationPath ahk
+            $e = gh api repos/AutoHotkey/Ahk2Exe/releases/latest --jq '.tag_name + " " + ([.assets[].name] | join(","))'
+            "Ahk2Exe : $e"
+            gh release download --repo AutoHotkey/Ahk2Exe --pattern "Ahk2Exe*.zip" --output ahk2exe.zip
+            Expand-Archive ahk2exe.zip -DestinationPath ahk2exe
+            Get-ChildItem -Recurse ahk, ahk2exe -Include *.exe | Select-Object FullName
+            $a = Get-ChildItem -Recurse ahk -Filter AutoHotkey64.exe | Select-Object -First 1
+            $c = Get-ChildItem -Recurse ahk2exe -Filter Ahk2Exe.exe | Select-Object -First 1
+            if (-not $a -or -not $c) { throw "AutoHotkey64.exe ou Ahk2Exe.exe introuvable" }
+            "AHK=$($a.FullName)" | Out-File -Append $env:GITHUB_ENV -Encoding utf8
+            "AHK2EXE=$($c.FullName)" | Out-File -Append $env:GITHUB_ENV -Encoding utf8
+          } catch {
+            "::error::Téléchargement : $($_.Exception.Message) | AHK=$r | Ahk2Exe=$e"
+            exit 1
+          }
 
       - name: Vérifier la syntaxe du script
         shell: pwsh
         run: |
-          $p = Start-Process -FilePath "ahk\AutoHotkey64.exe" `
+          $p = Start-Process -FilePath $env:AHK `
                -ArgumentList '/ErrorStdOut=UTF-8', '/validate', 'companion\FrappeJuste.ahk' `
                -Wait -PassThru -NoNewWindow `
                -RedirectStandardOutput out.txt -RedirectStandardError err.txt
-          Get-Content out.txt, err.txt -Encoding UTF8
-          if ($p.ExitCode -ne 0) { Write-Error "Erreur de syntaxe dans FrappeJuste.ahk (code $($p.ExitCode))"; exit 1 }
+          $msg = (Get-Content out.txt, err.txt -Encoding UTF8) -join ' | '
+          $msg
+          if ($p.ExitCode -ne 0) { "::error::Syntaxe AHK (code $($p.ExitCode)) : $msg"; exit 1 }
           "Syntaxe OK"
 
       - name: Compiler
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
-          Start-Process -FilePath "ahk2exe\Ahk2Exe.exe" `
-            -ArgumentList '/in', 'companion\FrappeJuste.ahk', '/out', 'dist\FrappeJuste.exe', '/base', "$PWD\ahk\AutoHotkey64.exe", '/silent', 'verbose' `
-            -Wait -NoNewWindow
-          if (-not (Test-Path dist\FrappeJuste.exe)) { Write-Error "Compilation échouée"; exit 1 }
+          $p = Start-Process -FilePath $env:AHK2EXE `
+            -ArgumentList '/in', "$PWD\companion\FrappeJuste.ahk", '/out', "$PWD\dist\FrappeJuste.exe", '/base', "`"$env:AHK`"", '/silent', 'verbose' `
+            -Wait -PassThru -NoNewWindow -RedirectStandardOutput cout.txt -RedirectStandardError cerr.txt
+          $msg = (Get-Content cout.txt, cerr.txt -Encoding UTF8) -join ' | '
+          $msg
+          if (-not (Test-Path dist\FrappeJuste.exe)) { "::error::Compilation échouée (code $($p.ExitCode)) : $msg"; exit 1 }
           Copy-Item app\frappe-juste.html dist\
           Copy-Item LISEZMOI.txt dist\
           Compress-Archive -Path dist\* -DestinationPath FrappeJuste.zip
