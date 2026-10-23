@@ -1,0 +1,1308 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Frappe Juste</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: application plein écran sans défilement — en-tête, onglets, puis une vue qui remplit la hauteur ; clavier ISO dessiné en bas */
+:root{
+  --bg:#E9ECF0; --panel:#F7F8FA; --line:#D3D8DF; --ink:#181C23; --muted:#5A6371;
+  --cap:#FFFFFF; --cap-edge:#BFC6D0; --cap-ink:#1F242C;
+  --target:#181C23; --target-ink:#FFFFFF;
+  --swiss:#D52B1E; --ok:#1E7A4B; --err:#C62828; --err-bg:#FBE3E1;
+  --f1:#F5D5D1; --f2:#F6E2C2; --f3:#EFEBBE; --f4:#D3EBCB; --f5:#CBE4EC; --f6:#D7DAF3; --f7:#E8D4EF; --f8:#F2D1E1; --f9:#E3E5E8;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,"Courier New",monospace;
+  --kh:clamp(26px,5.6vh,50px);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14171C; --panel:#1C2027; --line:#2C323C; --ink:#E6E9EE; --muted:#97A0AD;
+  --cap:#2A3039; --cap-edge:#0C0E12; --cap-ink:#DDE1E7; --target:#F1F3F6; --target-ink:#14171C;
+  --ok:#5CC48C; --err:#FF7A6E; --err-bg:#4A1F1C;
+  --f1:#4A2E2C; --f2:#4A3B26; --f3:#45422A; --f4:#2C4230; --f5:#28404A; --f6:#33374F; --f7:#43314A; --f8:#4A2D3B; --f9:#30343A;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14171C; --panel:#1C2027; --line:#2C323C; --ink:#E6E9EE; --muted:#97A0AD;
+  --cap:#2A3039; --cap-edge:#0C0E12; --cap-ink:#DDE1E7; --target:#F1F3F6; --target-ink:#14171C;
+  --ok:#5CC48C; --err:#FF7A6E; --err-bg:#4A1F1C;
+  --f1:#4A2E2C; --f2:#4A3B26; --f3:#45422A; --f4:#2C4230; --f5:#28404A; --f6:#33374F; --f7:#43314A; --f8:#4A2D3B; --f9:#30343A;
+  color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.45;overflow:hidden}
+.app{height:100%;max-width:1240px;margin:0 auto;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:10px}
+@media (max-width:760px),(max-height:560px){body{overflow:auto}.app{height:auto}}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:28px;height:28px;border-radius:6px;background:var(--swiss);position:relative;flex:none}
+.mark::before,.mark::after{content:"";position:absolute;background:#fff;left:50%;top:50%;transform:translate(-50%,-50%)}
+.mark::before{width:16px;height:5px}.mark::after{width:5px;height:16px}
+/* drapeau selon la disposition choisie */
+.mark[data-flag]:not([data-flag="ch"])::before,.mark[data-flag]:not([data-flag="ch"])::after{display:none}
+.mark[data-flag="de"]{background:linear-gradient(#000 0 33.4%,#DD0000 0 66.7%,#FFCE00 0)}
+.mark[data-flag="fr"]{background:linear-gradient(90deg,#0055A4 0 33.4%,#FFFFFF 0 66.7%,#EF4135 0);box-shadow:inset 0 0 0 1px var(--line)}
+.mark[data-flag="us"]{background:linear-gradient(#3C3B6E,#3C3B6E) 0 0/46% 54% no-repeat,repeating-linear-gradient(#B22234 0 7.69%,#FFFFFF 0 15.38%);box-shadow:inset 0 0 0 1px var(--line)}
+h1{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0;line-height:1}
+nav.tabs{display:flex;gap:4px;flex:1}
+nav.tabs button{font:600 14px var(--body);background:none;border:0;color:var(--muted);padding:7px 12px;border-radius:8px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+select,.seg{font:500 13px var(--body);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+label.lab{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--swiss);outline-offset:2px}
+.view{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.view[hidden]{display:none!important}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px}
+.stat{display:flex;align-items:baseline;gap:5px}
+.stat strong{font:600 20px var(--mono);font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:12px}
+.grow{flex:1}
+.btn{font:500 13px var(--body);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.typebox{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;cursor:text;flex:none}
+.typebox.focused{border-color:var(--ink)}
+#text{font:400 clamp(16px,2.6vh,21px)/1.7 var(--mono);white-space:pre-wrap;word-break:break-word;height:5.1em;overflow:hidden;margin:0}
+#text .done{color:var(--muted)}
+#text .done.bad{color:var(--err);background:var(--err-bg)}
+#text .cur{background:var(--target);color:var(--target-ink);border-radius:3px}
+#text .cur.bad{background:var(--err);color:#fff}
+#text .sp.cur::after{content:"·"}
+#hidden{position:absolute;inset:0;opacity:0;resize:none;border:0;width:100%;height:100%;font-size:16px;cursor:text}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:12px;background:color-mix(in srgb,var(--panel) 82%,transparent);font-weight:500;pointer-events:none}
+.sheet{position:absolute;inset:0;background:var(--panel);border-radius:12px;padding:12px 18px;display:flex;flex-direction:column;gap:8px;z-index:2}
+.sheet h3{font-family:var(--display);font-size:18px;margin:0}
+.hint{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:30px;font-size:13px;color:var(--muted)}
+.hint .ch{font:600 19px var(--mono);color:var(--ink);min-width:1.3em;text-align:center}
+.kc{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:26px;padding:0 7px;font:600 13px var(--mono);background:var(--cap);color:var(--cap-ink);border:1px solid var(--cap-edge);border-bottom-width:3px;border-radius:6px}
+.kc.mod{font-family:var(--body);font-size:12px}
+.warn{color:var(--err)}
+.kbzone{display:flex;gap:12px;align-items:flex-end;margin-top:auto;overflow-x:auto}
+.kb{flex:1;min-width:560px;max-width:960px;display:flex;flex-direction:column;gap:4px;padding:10px;background:color-mix(in srgb,var(--cap-edge) 35%,var(--bg));border-radius:12px;user-select:none}
+.kr{display:flex;gap:4px}
+.key{flex-basis:0;position:relative;height:var(--kh);background:var(--cap);color:var(--cap-ink);border:1px solid var(--cap-edge);border-bottom-width:4px;border-radius:6px;font:500 12px var(--mono);transition:transform .06s,background .12s}
+.fingers .key[data-f]{background:var(--fc)}
+.key .b{position:absolute;left:5px;bottom:2px;font-size:13px}
+.key .s{position:absolute;left:5px;top:1px;font-size:11px;color:var(--muted)}
+.key .a{position:absolute;right:5px;bottom:2px;font-size:11px;color:var(--muted)}
+.key .L{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600}
+.key .m{position:absolute;left:7px;bottom:4px;font:500 11px var(--body);color:var(--muted)}
+.key .d{color:var(--swiss)!important}
+.key .n{position:absolute;right:5px;top:1px;font-size:10px;color:var(--muted);text-decoration:underline}
+.key .b2{position:absolute;left:21px;bottom:2px;font-size:13px}
+.key .s2{position:absolute;left:21px;top:1px;font-size:11px;color:var(--muted)}
+.key .off{opacity:.3}
+.key .d{font-size:15px}
+.key[data-step]::before{content:attr(data-step);position:absolute;top:-9px;left:-6px;height:17px;padding:0 5px;border-radius:9px;background:var(--swiss);color:#fff;font:italic 600 10px/17px var(--body);white-space:nowrap;z-index:2}
+.key.home::after{content:"";position:absolute;left:50%;bottom:4px;width:9px;height:2px;margin-left:-4px;background:var(--muted);border-radius:1px}
+.key.hl{background:var(--target)!important;border-color:var(--target)}
+.key.hl span{color:var(--target-ink)!important}
+.key.hlm{outline:3px solid var(--swiss);outline-offset:-3px}
+.key.press{transform:translateY(2px);border-bottom-width:2px}
+.key.wrong{background:var(--err)!important}
+.key.wrong span{color:#fff!important}
+.clickable .key{cursor:pointer}
+.clickable .key:hover{border-color:var(--ink)}
+.np{display:grid;grid-template-columns:repeat(4,calc(var(--kh)*1.05));grid-auto-rows:var(--kh);gap:4px;padding:10px;background:color-mix(in srgb,var(--cap-edge) 35%,var(--bg));border-radius:12px;transition:opacity .2s;flex:none}
+.np .key{height:auto}
+.np.dim{opacity:.35}
+.np-cap{font-size:11px;color:var(--muted);text-align:center;grid-column:1/-1;align-self:end;line-height:1}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);align-items:center}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px;border:1px solid var(--cap-edge)}
+/* Caractères cachés */
+.chars{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,400px);gap:12px;flex:1;min-height:0}
+@media (max-width:760px){.chars{grid-template-columns:minmax(0,1fr)}}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:hidden}
+.subtabs{display:flex;flex-wrap:wrap;gap:4px}
+.subtabs button{font:500 13px var(--body);background:none;border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:4px 11px;cursor:pointer}
+.subtabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.subtabs small{opacity:.7;margin-left:3px}
+.fdesc{font-size:12px;color:var(--muted);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start;min-height:0;overflow:hidden}
+.chip{font:600 16px var(--mono);min-width:38px;height:36px;padding:0 8px;background:var(--cap);color:var(--cap-ink);border:1px solid var(--cap-edge);border-bottom-width:3px;border-radius:7px;cursor:pointer}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--target);color:var(--target-ink);border-color:var(--target)}
+input[type=text],textarea.custom{font:400 14px var(--body);background:var(--cap);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:100%}
+.det-top{display:flex;align-items:center;gap:14px}
+.glyph{font:600 46px/1 var(--mono);min-width:58px;height:62px;display:flex;align-items:center;justify-content:center;background:var(--cap);border:1px solid var(--cap-edge);border-bottom-width:4px;border-radius:10px}
+.det-name{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.2}
+.badge{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:10px;background:var(--bg);color:var(--muted);margin-top:4px}
+ol.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;counter-reset:s}
+ol.steps li{counter-increment:s;display:flex;align-items:center;flex-wrap:wrap;gap:5px;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:13px;border:1px solid transparent}
+ol.steps li::before{content:counter(s);font:600 11px var(--mono);width:18px;height:18px;border-radius:50%;background:var(--bg);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;flex:none}
+ol.steps li.on{border-color:var(--swiss);background:var(--bg)}
+ol.steps li.on::before{background:var(--swiss);color:#fff}
+.alt{font-size:12px;color:var(--muted);margin:0}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.toast{font-size:12px;color:var(--ok);align-self:center}
+/* Progrès */
+.prog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto minmax(0,1fr);gap:12px;flex:1;min-height:0}
+@media (max-width:760px){.prog{grid-template-columns:minmax(0,1fr)}}
+.prog .wide{grid-column:1/-1}
+.pane h2{font-family:var(--display);font-size:16px;margin:0}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.weak{display:flex;flex-direction:column;gap:5px}
+.weak div{display:flex;align-items:center;gap:10px;font-size:13px}
+.weak .g{font:600 17px var(--mono);width:26px;text-align:center}
+.meter{height:6px;background:var(--line);border-radius:3px;width:90px;overflow:hidden;flex:none}
+.meter i{display:block;height:100%;background:var(--err)}
+.empty{color:var(--muted);font-size:13px}
+/* Abréviations */
+.abv{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.abv[hidden]{display:none!important}
+.wgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;flex:1;min-height:0}
+.lgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,1.3fr);gap:12px;flex:1;min-height:0}
+@media (max-width:760px){.wgrid,.lgrid{grid-template-columns:minmax(0,1fr)}}
+.wbox{position:relative;flex:1;min-height:160px}
+#wText{width:100%;height:100%;resize:none;font:400 16px/1.6 var(--body);background:var(--cap);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.slist{overflow:auto;min-height:0;flex:1;display:flex;flex-direction:column;gap:2px}
+.sitem{display:flex;gap:10px;align-items:baseline;padding:5px 8px;border-radius:7px;cursor:pointer;text-align:left;background:none;border:1px solid transparent;color:var(--ink);font:inherit;width:100%}
+.sitem:hover{background:var(--bg)}
+.sitem[aria-current="true"]{border-color:var(--ink);background:var(--bg)}
+.sitem code{font:600 13px var(--mono);color:var(--swiss);flex:none;min-width:64px}
+.sitem span{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.sitem b{font-weight:500;font-size:13px;flex:1;min-width:0}
+.qa{position:absolute;right:10px;top:10px;display:flex;gap:4px;padding:6px;background:var(--panel);border:1px solid var(--ink);border-radius:10px;box-shadow:0 8px 20px rgb(0 0 0 / .18);z-index:4}
+.qa[hidden]{display:none}
+.fill{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;padding:10px 12px;border:1px solid var(--swiss);border-radius:10px;background:var(--bg)}
+.fill[hidden]{display:none}
+.fill label,.form label{display:flex;flex-direction:column;font-size:12px;color:var(--muted);gap:3px}
+.fill select{min-width:140px}
+.form{display:flex;flex-direction:column;gap:8px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+textarea.snip{font:400 14px/1.5 var(--body);background:var(--cap);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;flex:1;min-height:90px;resize:none}
+label[for="ed-t"]{display:flex;flex-direction:column}
+.drill{max-width:680px;width:100%;margin:0 auto}
+.dprompt{font:500 17px/1.55 var(--body);background:var(--cap);border:1px solid var(--line);border-radius:10px;padding:14px;white-space:pre-wrap;max-height:32vh;overflow:auto}
+textarea.out{font:400 12px/1.5 var(--mono);flex:1;min-height:120px;resize:none;background:var(--cap);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%}
+.ok{color:var(--ok)}
+.kbhold{position:relative;margin-top:auto}
+.kbhold .kbzone{margin-top:0}
+.pop{position:absolute;right:0;bottom:calc(100% + 6px);width:min(380px,100%);background:var(--panel);border:1px solid var(--ink);border-radius:12px;box-shadow:0 10px 28px rgb(0 0 0 / .2);padding:12px 14px;display:flex;flex-direction:column;gap:8px;z-index:5}
+.pop[hidden]{display:none}
+.pop .ph{display:flex;align-items:center;gap:10px}
+.pop .ph b{font-family:var(--display);font-size:15px;flex:1}
+.pop .x{background:none;border:0;font-size:18px;color:var(--muted);cursor:pointer;line-height:1;padding:2px 6px}
+.pop .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pop .row small{color:var(--muted)}
+.banner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px 12px;border-radius:10px;background:var(--err-bg);border:1px solid var(--err);font-size:13px}
+.banner[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.key,.np{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><div class="mark" aria-hidden="true"></div><h1>Frappe Juste</h1></div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" id="tab-train" aria-selected="true">Entraînement</button>
+      <button role="tab" id="tab-chars" aria-selected="false">Caractères cachés</button>
+      <button role="tab" id="tab-abbr" aria-selected="false">Abréviations</button>
+      <button role="tab" id="tab-prog" aria-selected="false">Progrès</button>
+    </nav>
+    <label class="lab" for="laySel">Clavier <select id="laySel"></select></label>
+    <label class="lab" for="modSel">Modèle <select id="modSel"><option value="laptop">Portable (pavé intégré, Fn)</option><option value="desktop">Bureau (pavé numérique)</option></select></label>
+  </header>
+
+  <div class="banner" id="detect" hidden></div>
+  <section class="view" id="view-train">
+    <div class="bar">
+      <label class="lab" for="lesSel">Leçon <select id="lesSel"></select></label>
+      <div class="stat"><strong id="sWpm">0</strong><small>mots/min</small></div>
+      <div class="stat"><strong id="sAcc">100</strong><small>% précision</small></div>
+      <div class="stat"><strong id="sErr">0</strong><small>erreurs</small></div>
+      <div class="stat"><strong id="sProg">0</strong><small id="sProgL">/ 0</small></div>
+      <span class="grow"></span>
+      <button class="btn" id="btnNew">Nouveau texte</button>
+    </div>
+    <div class="typebox" id="typebox">
+      <p id="text"></p>
+      <textarea id="hidden" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Zone de frappe"></textarea>
+      <div class="overlay" id="blurOv">Cliquez ici, puis tapez</div>
+      <div class="sheet" id="result" hidden></div>
+      <div class="sheet" id="customBox" hidden>
+        <label for="customTxt" style="font-weight:600">Collez votre propre texte (courrier, notes, paroles…)</label>
+        <textarea class="custom" id="customTxt" rows="2"></textarea>
+        <div><button class="btn primary" id="customGo">S'entraîner sur ce texte</button></div>
+      </div>
+    </div>
+    <div class="hint" id="hint"></div>
+    <div class="kbhold"><div class="kbzone"><div class="kb clickable" id="kbTrain"></div></div><div class="pop" id="pop" hidden></div></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="view" id="view-chars" hidden>
+    <div class="chars">
+      <div class="pane">
+        <div class="subtabs" id="famTabs" role="tablist"></div>
+        <p class="fdesc" id="famDesc"></p>
+        <input type="text" id="findIn" placeholder="Chercher : « euro », « guillemet »… ou collez le caractère" aria-label="Chercher un caractère">
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="pane" id="detail" aria-live="polite"></div>
+    </div>
+    <div class="kbzone"><div class="kb clickable" id="kbChars"></div><div class="np" id="numpad"></div></div>
+  </section>
+
+  <section class="view" id="view-abbr" hidden>
+    <div class="subtabs" id="abTabs" role="tablist">
+      <button data-v="write" id="abt-write">Rédiger</button>
+      <button data-v="lib" id="abt-lib">Bibliothèque</button>
+      <button data-v="drill" id="abt-drill">S'entraîner</button>
+      <button data-v="sugg" id="abt-sugg">Suggestions</button>
+      <button data-v="export" id="abt-export">Exporter</button>
+    </div>
+
+    <div class="abv" id="ab-write">
+      <div class="wgrid">
+        <div class="pane">
+          <div class="bar" style="gap:8px 14px">
+            <span class="fdesc">Abréviation + <b>Espace</b> ou <b>Entrée</b> pour développer · <b>Retour arrière</b> juste après pour annuler · <b>maintenir une lettre + Espace</b> pour les accents</span>
+            <span class="grow"></span>
+            <button class="btn primary" id="wCopy">Copier le texte</button>
+            <span id="wClearZone"></span>
+            <span class="toast" id="wToast"></span>
+          </div>
+          <div class="wbox">
+            <textarea id="wText" spellcheck="true" aria-label="Zone de rédaction" placeholder="Essayez : tapez ;bj puis Espace…"></textarea>
+            <div class="qa" id="qaBar" hidden></div>
+          </div>
+          <div class="fill" id="fillBar" hidden></div>
+          <p class="fdesc" id="wSaved"></p>
+        </div>
+        <div class="pane">
+          <h2>Mes abréviations</h2>
+          <input type="text" id="wFind" placeholder="Filtrer…" aria-label="Filtrer les abréviations">
+          <div class="slist" id="wList"></div>
+          <p class="fdesc">Cliquez pour insérer à l'endroit du curseur.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="abv" id="ab-lib" hidden>
+      <div class="lgrid">
+        <div class="pane">
+          <div class="subtabs" id="libGroups"></div>
+          <div class="slist" id="libList"></div>
+          <div><button class="btn" id="libNew">+ Nouvelle abréviation</button></div>
+        </div>
+        <div class="pane form">
+          <h2 id="edTitle">Nouvelle abréviation</h2>
+          <div class="frow">
+            <label for="ed-a">Abréviation<input type="text" id="ed-a" placeholder=";sig" autocomplete="off"></label>
+            <label for="ed-g">Groupe<input type="text" id="ed-g" list="ed-glist" autocomplete="off"></label>
+            <datalist id="ed-glist"></datalist>
+          </div>
+          <label for="ed-t" style="flex:1;min-height:0">Texte développé<textarea class="snip" id="ed-t"></textarea></label>
+          <div class="chips" style="gap:4px">
+            <span class="fdesc" style="align-self:center">Insérer :</span>
+            <button class="btn ph-ins" data-ph="{date}">Date</button>
+            <button class="btn ph-ins" data-ph="{date:court}">Date courte</button>
+            <button class="btn ph-ins" data-ph="{heure}">Heure</button>
+            <button class="btn ph-ins" data-ph="{curseur}">Curseur</button>
+            <button class="btn ph-ins" data-ph="{champ:Nom}">Champ à remplir</button>
+            <button class="btn ph-ins" data-ph="{choix:Madame|Monsieur}">Liste de choix</button>
+          </div>
+          <p class="fdesc" id="edPrev"></p>
+          <div class="acts"><button class="btn primary" id="edSave">Enregistrer</button><span id="edDelZone"></span><span class="toast" id="edMsg"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="abv" id="ab-drill" hidden>
+      <div class="pane drill">
+        <div class="bar"><h2>Retrouvez l'abréviation</h2><span class="grow"></span><div class="stat"><strong id="drScore">0 / 0</strong><small>trouvées</small></div></div>
+        <span class="badge" id="drGroup"></span>
+        <div class="dprompt" id="drPrompt"></div>
+        <label class="lab" for="dr-in" style="font-size:13px">Tapez l'abréviation qui produit ce texte, puis Entrée</label>
+        <input type="text" id="dr-in" autocomplete="off" spellcheck="false" style="font-family:var(--mono);font-size:18px">
+        <div class="hint" id="drFb"></div>
+        <div class="acts"><button class="btn primary" id="drCheck">Vérifier</button><button class="btn" id="drNext">Suivante</button></div>
+      </div>
+    </div>
+
+    <div class="abv" id="ab-sugg" hidden>
+      <div class="pane">
+        <h2>Expressions que vous tapez souvent</h2>
+        <p class="fdesc">Calculé à partir de ce que vous rédigez et copiez dans l'onglet Rédiger. Chaque expression répétée peut devenir une abréviation.</p>
+        <div class="slist" id="suggList"></div>
+      </div>
+    </div>
+
+    <div class="abv" id="ab-export" hidden>
+      <div class="pane" style="flex:1">
+        <div class="subtabs" id="exFmt">
+          <button data-f="esp" id="exf-esp">Espanso (gratuit)</button>
+          <button data-f="comp" id="exf-comp">Compagnon portable (clé USB)</button>
+          <button data-f="ahk" id="exf-ahk">AutoHotkey v2 (abréviations seules)</button>
+          <button data-f="word" id="exf-word">Word &amp; Outlook (correction auto)</button>
+          <button data-f="csv" id="exf-csv">Tableau CSV (aText, PhraseExpress…)</button>
+        </div>
+        <p class="fdesc" id="exHelp"></p>
+        <textarea class="out" id="exOut" readonly aria-label="Fichier exporté"></textarea>
+        <div class="acts"><button class="btn primary" id="exCopy">Copier tout</button><button class="btn" id="exDl" hidden>Enregistrer le fichier</button><span class="toast" id="exToast"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-prog" hidden>
+    <div class="prog">
+      <div class="pane"><h2>Vitesse, 20 dernières sessions</h2><div id="spark"></div><p class="fdesc" id="progSum"></p></div>
+      <div class="pane"><h2>Points faibles <span id="weakLay" style="font-weight:400;color:var(--muted);font-size:13px"></span></h2><div class="weak" id="weakList"></div>
+        <div class="acts"><button class="btn primary" id="weakGo">Entraîner ces caractères</button></div></div>
+      <div class="pane"><h2>Dernières sessions</h2><div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Leçon</th><th>Clavier</th><th>Mots/min</th><th>Précision</th></tr></thead><tbody id="histBody"></tbody></table></div>
+        <div class="acts" id="resetZone"></div></div>
+      <div class="pane"><h2>Sauvegarde (clé USB)</h2>
+        <p class="fdesc">Vos abréviations, réglages et progrès sont gardés par ce navigateur. Pour les emporter sur un autre ordinateur, enregistrez une sauvegarde sur la clé, puis ouvrez-la sur l'autre poste.</p>
+        <div class="acts" style="margin-top:0">
+          <button class="btn primary" id="bkMake">Créer la sauvegarde</button>
+          <button class="btn" id="bkDl" hidden>Enregistrer le fichier sur la clé</button>
+          <label class="btn" for="bkFile" style="cursor:pointer">Ouvrir un fichier de sauvegarde<input type="file" id="bkFile" accept=".json,application/json" hidden></label>
+        </div>
+        <textarea class="out" id="bkTxt" spellcheck="false" aria-label="Texte de sauvegarde" placeholder="La sauvegarde apparaît ici. Vous pouvez aussi y coller une sauvegarde, puis Restaurer."></textarea>
+        <div class="acts" style="margin-top:0" id="bkActs"><button class="btn" id="bkCopy">Copier</button><button class="btn" id="bkRestore">Restaurer depuis ce texte</button><span class="toast" id="bkMsg"></span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+const NONE='·';
+const R0=['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'];
+const R1=['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight'];
+const R2=['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'];
+const R3=['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash'];
+const CH_DE={name:'Suisse (DE)',iso:true,altgr:true,
+ r0:['§°·','1+¦','2"@','3*#','4ç·','5%·','6&¬','7/|','8(¢','9)·','0=·',"'?´",'^`~'],
+ r1:['qQ·','wW·','eE€','rR·','tT·','zZ·','uU·','iI·','oO·','pP·','üè[','¨!]'],
+ r2:['aA·','sS·','dD·','fF·','gG·','hH·','jJ·','kK·','lL·','öé·','äà{','$£}'],
+ r3:['<>\\','yY·','xX·','cC·','vV·','bB·','nN·','mM·',',;·','.:·','-_·'],
+ dead:['Minus:2','Equal:0','Equal:1','Equal:2','BracketRight:0']};
+const CH_FR=JSON.parse(JSON.stringify(CH_DE));
+CH_FR.name='Suisse (FR)';CH_FR.r1[10]='èü[';CH_FR.r2[9]='éö·';CH_FR.r2[10]='àä{';
+const FR={name:'France AZERTY',iso:true,altgr:true,
+ r0:['²··','&1·','é2~','"3#',"'4{",'(5[','-6|','è7`','_8\\','ç9^','à0@',')°]','=+}'],
+ r1:['aA·','zZ·','eE€','rR·','tT·','yY·','uU·','iI·','oO·','pP·','^¨·','$£¤'],
+ r2:['qQ·','sS·','dD·','fF·','gG·','hH·','jJ·','kK·','lL·','mM·','ù%·','*µ·'],
+ r3:['<>·','wW·','xX·','cC·','vV·','bB·','nN·',',?·',';.·',':/·','!§·'],
+ dead:['Digit2:2','Digit7:2','BracketLeft:0','BracketLeft:1']};
+const US={name:'US QWERTY',iso:false,altgr:false,
+ r0:['`~·','1!·','2@·','3#·','4$·','5%·','6^·','7&·','8*·','9(·','0)·','-_·','=+·'],
+ r1:['qQ·','wW·','eE·','rR·','tT·','yY·','uU·','iI·','oO·','pP·','[{·',']}·','\\|·'],
+ r2:['aA·','sS·','dD·','fF·','gG·','hH·','jJ·','kK·','lL·',';:·',"'\"·"],
+ r3:['zZ·','xX·','cC·','vV·','bB·','nN·','mM·',',<·','.>·','/?·'],
+ dead:[]};
+/* Disposition « German » (Allemagne) de Windows — souvent active par erreur sur un clavier physique suisse */
+const DE={name:'Allemand (Allemagne)',iso:true,altgr:true,
+ r0:['^°·','1!·','2"²','3§³','4$·','5%·','6&·','7/{','8([','9)]','0=}','ß?\\','´`·'],
+ r1:['qQ@','wW·','eE€','rR·','tT·','zZ·','uU·','iI·','oO·','pP·','üÜ·','+*~'],
+ r2:['aA·','sS·','dD·','fF·','gG·','hH·','jJ·','kK·','lL·','öÖ·','äÄ·',"#'·"],
+ r3:['<>|','yY·','xX·','cC·','vV·','bB·','nN·','mMµ',',;·','.:·','-_·'],
+ dead:['Backquote:0','Equal:0','Equal:1']};
+const LAYOUTS={'ch-de':CH_DE,'ch-fr':CH_FR,'de':DE,'fr':FR,'us':US};
+const FINGER={Backquote:1,Digit1:1,Digit2:2,Digit3:3,Digit4:4,Digit5:4,Digit6:5,Digit7:5,Digit8:6,Digit9:7,Digit0:8,Minus:8,Equal:8,
+ KeyQ:1,KeyW:2,KeyE:3,KeyR:4,KeyT:4,KeyY:5,KeyU:5,KeyI:6,KeyO:7,KeyP:8,BracketLeft:8,BracketRight:8,Backslash:8,
+ KeyA:1,KeyS:2,KeyD:3,KeyF:4,KeyG:4,KeyH:5,KeyJ:5,KeyK:6,KeyL:7,Semicolon:8,Quote:8,
+ IntlBackslash:1,KeyZ:1,KeyX:2,KeyC:3,KeyV:4,KeyB:4,KeyN:5,KeyM:5,Comma:6,Period:7,Slash:8,Space:9};
+const FNAMES=['','auriculaire G','annulaire G','majeur G','index G','index D','majeur D','annulaire D','auriculaire D','pouces'];
+const COMP={'^':{a:'â',e:'ê',i:'î',o:'ô',u:'û',A:'Â',E:'Ê',I:'Î',O:'Ô',U:'Û'},
+ '¨':{a:'ä',e:'ë',i:'ï',o:'ö',u:'ü',y:'ÿ',A:'Ä',E:'Ë',I:'Ï',O:'Ö',U:'Ü'},
+ '`':{a:'à',e:'è',i:'ì',o:'ò',u:'ù',A:'À',E:'È',U:'Ù'},
+ '´':{a:'á',e:'é',i:'í',o:'ó',u:'ú',A:'Á',E:'É',O:'Ó'},
+ '~':{n:'ñ',a:'ã',o:'õ',N:'Ñ'}};
+const REV={};for(const d in COMP)for(const b in COMP[d]){const r=COMP[d][b];(REV[r]=REV[r]||[]).push([d,b]);}
+/* Codes Alt Windows (page 1252, pavé numérique) */
+const ALT={'«':'0171','»':'0187','œ':'0156','Œ':'0140','æ':'0230','Æ':'0198','–':'0150','—':'0151','…':'0133','‘':'0145','’':'0146','“':'0147','”':'0148','•':'0149','™':'0153','†':'0134','‰':'0137','¡':'0161','©':'0169','®':'0174','°':'0176','±':'0177','²':'0178','³':'0179','µ':'0181','¶':'0182','¼':'0188','½':'0189','¾':'0190','¿':'0191','Ç':'0199','×':'0215','ß':'0223','÷':'0247','ÿ':'0255','ñ':'0241','Ñ':'0209','Ù':'0217','Ê':'0202','Â':'0194','Î':'0206','Ô':'0212','Û':'0219','É':'0201','È':'0200','À':'0192','€':'0128','@':'64','#':'35','|':'124','\\':'92','[':'91',']':'93','{':'123','}':'125','~':'126'};
+const UNI={'≠':'2260','≤':'2264','≥':'2265','→':'2192','←':'2190','∞':'221E','≈':'2248','√':'221A'};
+
+function build(L){
+  const keys={},direct={},deadM={};
+  const rows=[[R0,L.r0],[L.iso?R1:R1.concat('Backslash'),L.r1],[L.iso?R2.concat('Backslash'):R2,L.r2],[L.iso?['IntlBackslash'].concat(R3):R3,L.r3]];
+  rows.forEach(([codes,ks])=>codes.forEach((c,i)=>{const a=Array.from(ks[i]).map(x=>x===NONE?'':x);keys[c]=a;
+    a.forEach((ch,lv)=>{if(!ch)return;const dead=L.dead.includes(c+':'+lv);const t=dead?deadM:direct;if(!(ch in t))t[ch]={code:c,lv,dead};});}));
+  direct[' ']={code:'Space',lv:0};
+  Object.assign(L,{keys,direct,deadM,rows});
+}
+Object.values(LAYOUTS).forEach(build);
+function combo(L,ch){
+  if(L.direct[ch])return[L.direct[ch]];
+  if(L.deadM[ch])return[L.deadM[ch],L.direct[' ']];
+  for(const [d,b] of (REV[ch]||[]))if(L.deadM[d]&&L.direct[b])return[L.deadM[d],L.direct[b]];
+  return null;
+}
+function sanitize(L,t){let o='';for(const ch of t){if(combo(L,ch)){o+=ch;continue;}const s=ch.normalize('NFD').replace(/[\u0300-\u036f]/g,'');if(s&&combo(L,s))o+=s;else if(ch==='’')o+="'";}return o.replace(/ +/g,' ').trim();}
+
+/* ---------- textes ---------- */
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+function words(l,n){let o=[],len=0;while(len<n){const w=rnd(l);o.push(w);len+=w.length+1;}return o.join(' ');}
+function sentences(l,n){let o=[],len=0,p=shuffle(l);while(len<n){if(!p.length)p=shuffle(l);const s=p.pop();o.push(s);len+=s.length+1;}return o.join(' ');}
+const W_YZ=['zéro','yaourt','zone','analyse','gaz','lycée','style','zèbre','pays','crayon','horizon','rythme','onze','douze','treize','quinze','seize','Zurich','Yaoundé','lazy','crazy','yesterday','zoo','synthèse','physique','zigzag','jazz','yoga','typique','analyze','yearly'];
+const W_EEA=['été','très','déjà','voilà','élève','après','succès','procédure','délai','référence','réalité','première','modèle','répété','à','là','déposé','vérifié','numéro','répertoire','célèbre','mère','père','frère','préféré','régulier','générale','économie','système','thème','dès','accès'];
+const S_EEA=['Le délai a été prolongé à la demande du déposant.','La procédure a déjà été vérifiée par le service.','Le modèle déposé a été publié la semaine dernière.','Après la répétition, la chorale a préparé la première partie.'];
+const W_DEAD=['être','fenêtre','maître','côté','dépôt','île','hôtel','sûr','août','Noël','naïf','maïs','coïncidence','forêt','tâche','âge','goût','bientôt','connaître','arrêt','même','extrême','plutôt','diplôme','contrôle','théâtre','pâte','égoïste'];
+const S_DEAD=['Le dépôt a été effectué le même jour.','Il faut être sûr du contrôle avant la fin du mois d\'août.','Bientôt Noël : la chorale répète plutôt le samedi.'];
+const W_CAPS=['École','État','Égypte','Ève','Élodie','Édition','Économie','Étude','Éric','Émile','Élise','Électricité','Église','Évangile','À'];
+const S_CAPS=['À bientôt, et merci pour votre réponse.','État des lieux : tout est en ordre.','Église et chorale : répétition à 19 h.'];
+const W_CU=['ça','garçon','français','reçu','façon','leçon','aperçu','où','commerçant','façade','déçu','maçon','reçoit','soupçon'];
+const S_CU=['Où avez-vous reçu ce courrier ?','Ça dépend de la façon dont la leçon est donnée.'];
+const S_SYM=['Écrivez à secretariat@exemple.org avant le 30.','Montant : € 250, réf. #2026-045.','Classe [9] et classe [42] : voir {annexe}.','Chemin : C:\\Users\\Boss\\Documents','Option a | option b | option c','Version ~ finale, à valider.','Tag #chorale et #gospel sur la page.'];
+const S_PUNCT=['Taxe : 653 CHF (art. 8.2) ; délai = 3 mois !','Réf. 2026/045-OAPI, page 12 sur 30.','"Accord de Bangui" ? Oui, version 2015.','50 % + 20 % = 70 % du montant total.','Prix : 12.50 * 4 = 50.00 ; reste 7 !','Rendez-vous à 18:30 (salle B), merci.'];
+const S_LAW=['L\'enregistrement international produit ses effets dans chaque partie contractante désignée.','Le titulaire peut demander une désignation postérieure à tout moment.','Un refus provisoire doit être notifié avant l\'expiration du délai de douze mois.','La marque est déposée pour des produits des classes 9, 35 et 42.','Le déposant dispose d\'un délai de trois mois pour répondre à l\'avis d\'irrégularité.','Une opposition peut être formée dans les six mois suivant la publication.','Le renouvellement s\'effectue tous les dix ans moyennant le paiement d\'une taxe.','Veuillez trouver ci-joint la copie du récépissé de dépôt.'];
+const S_EN=['The applicant may file a subsequent designation at any time.','Please find attached the updated fee calculation for your review.','The rehearsal starts at seven, so let\'s meet a few minutes early.','Could you send me the final version of the agreement by Friday?','Quick brown foxes jump over lazy dogs while zebras quietly yawn.','Thank you for your patience; we will reply within two working days.'];
+const S_CODE=['const notes = ["C", "E", "G"];','if (a !== b) { return x * 2; }','let total = prix[0] + prix[1];','function play(n) { return n % 12; }','obj = { id: 7, nom: "Garden" };','url = "https://exemple.org/?q=1&r=2";'];
+const LESSONS=[
+ {id:'home',g:'Bases',t:'Rangée de repos',gen:L=>{const k=['KeyA','KeyS','KeyD','KeyF','KeyJ','KeyK','KeyL','Semicolon','KeyG','KeyH'].map(c=>L.keys[c][0]).filter(c=>/\p{L}/u.test(c));let o=[];for(let i=0;i<30;i++){let w='';const n=2+Math.floor(Math.random()*4);for(let j=0;j<n;j++)w+=rnd(k);o.push(w);}return o.join(' ');}},
+ {id:'yz',g:'Bases',t:'Y et Z (piège QWERTZ)',gen:()=>words(W_YZ,180)},
+ {id:'eea',g:'Accents',t:'é · è · à',gen:()=>words(W_EEA,100)+' '+sentences(S_EEA,80)},
+ {id:'dead',g:'Accents',t:'ê â î ô û ï ë (touches mortes)',gen:()=>words(W_DEAD,110)+' '+sentences(S_DEAD,70)},
+ {id:'caps',g:'Accents',t:'É À È majuscules',gen:()=>words(W_CAPS,90)+' '+sentences(S_CAPS,70)},
+ {id:'cu',g:'Accents',t:'ç et ù',gen:()=>words(W_CU,90)+' '+sentences(S_CU,60)},
+ {id:'sym',g:'Symboles',t:'@ # € [ ] { } | \\ (AltGr)',gen:()=>sentences(S_SYM,180)},
+ {id:'punct',g:'Symboles',t:'Chiffres & ponctuation',gen:()=>sentences(S_PUNCT,180)},
+ {id:'code',g:'Symboles',t:'Code & adresses',gen:()=>sentences(S_CODE,170)},
+ {id:'law',g:'Textes',t:'Texte juridique (FR)',gen:()=>sentences(S_LAW,220)},
+ {id:'en',g:'Textes',t:'English text',gen:()=>sentences(S_EN,220)},
+ {id:'weak',g:'Personnel',t:'Mes points faibles',gen:L=>weakText(L)},
+ {id:'custom',g:'Personnel',t:'Mon texte',gen:()=>customText||''}];
+const BANK=[...W_YZ,...W_EEA,...W_DEAD,...W_CAPS,...W_CU,...[...S_LAW,...S_EN,...S_SYM,...S_PUNCT,...S_CODE].join(' ').split(' ')];
+
+/* ---------- caractères cachés ---------- */
+const CHARS=[
+ ['@','arobase'],['#','dièse'],['€','euro'],['|','barre verticale'],['\\','barre oblique inverse'],['[','crochet ouvrant'],[']','crochet fermant'],['{','accolade ouvrante'],['}','accolade fermante'],['~','tilde'],['¦','barre interrompue'],['¬','négation'],['¢','cent'],['¤','symbole monétaire'],['µ','micro'],
+ ['!','point d\'exclamation'],['?','point d\'interrogation'],['"','guillemet droit'],['\'','apostrophe droite'],['(','parenthèse ouvrante'],[')','parenthèse fermante'],['=','égal'],['+','plus'],['*','astérisque'],['%','pour cent'],['&','esperluette'],['/','barre oblique'],['_','tiret bas'],[':','deux-points'],[';','point-virgule'],['<','inférieur à'],['>','supérieur à'],['°','degré'],['§','paragraphe'],['$','dollar'],['£','livre sterling'],['²','exposant 2'],
+ ['é','e accent aigu'],['è','e accent grave'],['à','a accent grave'],['ù','u accent grave'],['ç','c cédille'],['ê','e circonflexe'],['â','a circonflexe'],['î','i circonflexe'],['ô','o circonflexe'],['û','u circonflexe'],['ë','e tréma'],['ï','i tréma'],['ü','u tréma'],['ö','o tréma'],['ä','a tréma'],['ÿ','y tréma'],['ñ','n tilde'],
+ ['É','E majuscule accent aigu'],['È','E majuscule accent grave'],['À','A majuscule accent grave'],['Ê','E majuscule circonflexe'],['Â','A majuscule circonflexe'],['Î','I majuscule circonflexe'],['Ô','O majuscule circonflexe'],['Û','U majuscule circonflexe'],['Ë','E majuscule tréma'],['Ï','I majuscule tréma'],['Ù','U majuscule accent grave'],['Ç','C majuscule cédille'],['Ñ','N majuscule tilde'],['^','accent circonflexe seul'],['`','accent grave seul'],['´','accent aigu seul'],['¨','tréma seul'],
+ ['«','guillemet français ouvrant'],['»','guillemet français fermant'],['’','apostrophe typographique'],['“','guillemet anglais ouvrant'],['”','guillemet anglais fermant'],['–','tiret demi-cadratin'],['—','tiret cadratin'],['…','points de suspension'],['œ','o e liés (cœur)'],['Œ','O E liés majuscule'],['æ','a e liés'],['ß','eszett'],['³','exposant 3'],['½','un demi'],['¼','un quart'],['×','multiplication'],['÷','division'],['±','plus ou moins'],['≠','différent de'],['≤','inférieur ou égal'],['≥','supérieur ou égal'],['≈','environ égal'],['→','flèche droite'],['←','flèche gauche'],['∞','infini'],['©','copyright'],['®','marque enregistrée'],['™','marque (trademark)'],['•','puce'],['†','croix (décédé)'],['‰','pour mille'],['¶','pied-de-mouche'],['¿','point d\'interrogation inversé'],['¡','point d\'exclamation inversé']];
+const NAME=Object.fromEntries(CHARS);
+const FAMS=[
+ {id:'altgr',t:'AltGr',d:'Gravés en petit à droite de la touche : maintenez AltGr (à droite de l\'espace).'},
+ {id:'shift',t:'Shift & directs',d:'Accessibles directement ou avec Shift, mais souvent mal repérés.'},
+ {id:'dead',t:'Touches mortes',d:'Une touche « morte » n\'affiche rien : elle attend la lettre suivante.'},
+ {id:'absent',t:'Absents',d:'Ni sur les touches, ni par touche morte : code Alt (pavé numérique) ou panneau Win + .'}];
+function family(L,ch){const c=combo(L,ch);if(!c)return'absent';if(c.length===2)return'dead';return c[0].lv===2?'altgr':'shift';}
+
+/* ---------- stockage ---------- */
+let store={layout:'ch-fr',model:'laptop',lesson:'eea',fingers:true,fam:'altgr',hist:[],stats:{}};
+/* pavé numérique intégré des portables (indices sous les lettres) */
+const EMB={0:'KeyM',1:'KeyJ',2:'KeyK',3:'KeyL',4:'KeyU',5:'KeyI',6:'KeyO',7:'Digit7',8:'Digit8',9:'Digit9'};
+const EMB_REV=Object.fromEntries(Object.entries(EMB).map(([d,c])=>[c,d]));
+const laptop=()=>store.model!=='desktop';
+const EMB_SYM={KeyP:'*',Semicolon:'-',Digit0:'/',Slash:'+'};
+const DUAL={BracketLeft:['ü','è','è','ü'],Semicolon:['ö','é','é','ö'],Quote:['ä','à','à','ä']};
+try{const s=JSON.parse(localStorage.getItem('frappejuste.v1'));if(s)store=Object.assign(store,s);}catch(e){}
+if(!LAYOUTS[store.layout])store.layout='ch-de';
+const save=()=>{try{localStorage.setItem('frappejuste.v1',JSON.stringify(store));}catch(e){}};
+let customText='';
+const lay=()=>LAYOUTS[store.layout];
+function weakList(id){const st=store.stats[id]||{};return Object.entries(st).filter(([c,v])=>v[0]>=3&&v[1]>0&&c!==' ').map(([c,v])=>({c,att:v[0],err:v[1],r:v[1]/v[0]})).sort((a,b)=>b.r-a.r||b.err-a.err).slice(0,6);}
+function weakText(L){const wl=weakList(store.layout).map(x=>x.c);if(!wl.length)return'';const pool=BANK.filter(w=>wl.some(c=>w.includes(c)));let o=[],len=0;while(len<200&&pool.length){const w=rnd(pool);o.push(w);len+=w.length+1;}return o.join(' ');}
+
+/* ---------- clavier ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function keyRows(L){
+  const r=L.rows,k=c=>({code:c,w:1}),rows=[];
+  rows.push([...r[0][0].map(k),{code:'Backspace',w:2,m:'⌫'}]);
+  if(L.iso){
+    rows.push([{code:'Tab',w:1.5,m:'Tab'},...r[1][0].map(k),{code:'Enter',w:1.5,m:'↵'}]);
+    rows.push([{code:'CapsLock',w:1.75,m:'Maj'},...r[2][0].map(k),{code:'Enter',w:1.25,m:''}]);
+    rows.push([{code:'ShiftLeft',w:1.25,m:'Shift'},...r[3][0].map(k),{code:'ShiftRight',w:2.75,m:'Shift'}]);
+  }else{
+    const r1=r[1][0].map(k);r1[r1.length-1].w=1.5;
+    rows.push([{code:'Tab',w:1.5,m:'Tab'},...r1]);
+    rows.push([{code:'CapsLock',w:1.75,m:'Caps'},...r[2][0].map(k),{code:'Enter',w:2.25,m:'Enter ↵'}]);
+    rows.push([{code:'ShiftLeft',w:2.25,m:'Shift'},...r[3][0].map(k),{code:'ShiftRight',w:2.75,m:'Shift'}]);
+  }
+  if(laptop()){rows.push([{code:'ControlLeft',w:1.5,m:'Ctrl'},{code:'Fn',w:1.25,m:'Fn'},{code:'MetaLeft',w:1.25,m:'Win'},{code:'AltLeft',w:1.25,m:'Alt'},{code:'Space',w:6.75,m:''},{code:'AltRight',w:1.5,m:L.altgr?'AltGr':'Alt'},{code:'ControlRight',w:1.5,m:'Ctrl'}]);return rows;}
+  rows.push([{code:'ControlLeft',w:1.25,m:'Ctrl'},{code:'MetaLeft',w:1.25,m:'Win'},{code:'AltLeft',w:1.25,m:'Alt'},{code:'Space',w:6.25,m:''},{code:'AltRight',w:1.25,m:L.altgr?'AltGr':'Alt'},{code:'MetaRight',w:1.25,m:'Win'},{code:'ContextMenu',w:1.25,m:'Menu'},{code:'ControlRight',w:1.25,m:'Ctrl'}]);
+  return rows;
+}
+function renderKb(el,L,fingers){
+  el.innerHTML='';el.classList.toggle('fingers',!!fingers);
+  keyRows(L).forEach(row=>{const r=document.createElement('div');r.className='kr';
+    row.forEach(K=>{const d=document.createElement('div');d.className='key';d.dataset.code=K.code;d.style.flexGrow=K.w;
+      const f=FINGER[K.code];if(f&&!K.m){d.dataset.f=f;d.style.setProperty('--fc','var(--f'+f+')');}
+      if(K.code==='Space'){d.dataset.f=9;d.style.setProperty('--fc','var(--f9)');}
+      if(K.code==='KeyF'||K.code==='KeyJ')d.classList.add('home');
+      if(K.m!==undefined)d.innerHTML='<span class="m">'+esc(K.m)+'</span>';
+      else{const [b,s,a]=L.keys[K.code];const dd=lv=>L.dead.includes(K.code+':'+lv)?' d':'';
+        const isL=/\p{L}/u.test(b)&&s===b.toUpperCase()&&b!==s;
+        const gl=(ch,lv)=>(L.dead.includes(K.code+':'+lv)&&DEADGLYPH[ch])||ch;
+        let h=isL?'<span class="L'+dd(0)+'">'+esc(s)+'</span>':'<span class="b'+dd(0)+'">'+esc(gl(b,0))+'</span>'+(s?'<span class="s'+dd(1)+'">'+esc(gl(s,1))+'</span>':'');
+        /* touches suisses à double marquage : colonne gauche = CH-DE, colonne droite = CH-FR */
+        if(DUAL[K.code]&&(store.layout==='ch-de'||store.layout==='ch-fr')){const [db,ds,fb,fs]=DUAL[K.code],fr=store.layout==='ch-fr',o=x=>x?' off':'';
+          h='<span class="s'+o(fr)+'">'+ds+'</span><span class="b'+o(fr)+'">'+db+'</span><span class="s2'+o(!fr)+'">'+fs+'</span><span class="b2'+o(!fr)+'">'+fb+'</span>';}
+        if(a)h+='<span class="a'+dd(2)+'">'+esc(gl(a,2))+'</span>';
+        const sub=laptop()&&(K.code.startsWith('Key')?EMB_REV[K.code]:EMB_SYM[K.code]);if(sub)h+='<span class="n">'+esc(sub)+'</span>';
+        d.innerHTML=h;}
+      r.appendChild(d);});
+    el.appendChild(r);});
+}
+function renderNumpad(){
+  const np=$('numpad');
+  const K=[['NumLock','Verr',1,1],['NumpadDivide','/',1,1],['NumpadMultiply','*',1,1],['NumpadSubtract','-',1,1],
+   ['Numpad7','7',1,1],['Numpad8','8',1,1],['Numpad9','9',1,1],['NumpadAdd','+',1,2],
+   ['Numpad4','4',1,1],['Numpad5','5',1,1],['Numpad6','6',1,1],
+   ['Numpad1','1',1,1],['Numpad2','2',1,1],['Numpad3','3',1,1],['NumpadEnter','↵',1,2],
+   ['Numpad0','0',2,1],['NumpadDecimal','.',1,1]];
+  np.innerHTML=K.map(([c,l,w,h])=>'<div class="key" data-code="'+c+'" style="grid-column:span '+w+';grid-row:span '+h+'"><span class="b">'+l+'</span></div>').join('')+'<div class="np-cap">pavé numérique</div>';
+}
+function clearHl(el){el.querySelectorAll('.hl,.hlm').forEach(k=>k.classList.remove('hl','hlm'));el.querySelectorAll('[data-step]').forEach(k=>k.removeAttribute('data-step'));}
+function hlCodes(el,press,hold){clearHl(el);(press||[]).forEach(c=>el.querySelectorAll('[data-code="'+c+'"]').forEach(k=>k.classList.add('hl')));(hold||[]).forEach(c=>el.querySelectorAll('[data-code="'+c+'"]').forEach(k=>k.classList.add('hlm')));}
+function flash(el,code,cls){el.querySelectorAll('[data-code="'+code+'"]').forEach(k=>{k.classList.add(cls);setTimeout(()=>k.classList.remove(cls),cls==='wrong'?260:110);});}
+function shiftFor(code){return (FINGER[code]||5)<=4?'ShiftRight':'ShiftLeft';}
+function holdOf(st){return st.lv===1?[shiftFor(st.code)]:st.lv===2?['AltRight']:[];}
+const DEADGLYPH={'¨':'◌̈','´':'◌́','`':'◌̀','^':'◌̂','~':'◌̃'};
+function capLabel(L,st){if(st.code==='Space')return'Espace';const b=L.keys[st.code][0];if(L.dead.includes(st.code+':0'))return DEADGLYPH[b]||b;return /\p{Ll}/u.test(b)?b.toUpperCase():b;}
+const KC=t=>'<span class="kc">'+esc(t)+'</span>',MC=t=>'<span class="kc mod">'+esc(t)+'</span>';
+function stepKeys(L,st){return (st.lv===1?MC('Shift')+' + ':st.lv===2?MC(L.altgr?'AltGr':'Alt')+' + ':'')+KC(capLabel(L,st));}
+
+/* séquence d'étapes animables pour un caractère */
+function steps(L,ch){
+  const c=combo(L,ch),out=[];
+  if(c){
+    c.forEach((st,i)=>{
+      let txt;
+      if(st.dead)txt=stepKeys(L,st)+' <small>touche morte : rien ne s\'affiche encore</small>';
+      else if(i===1&&st.code==='Space')txt='puis '+KC('Espace')+' <small>pour obtenir l\'accent seul</small>';
+      else txt=(i?'puis ':'')+stepKeys(L,st);
+      out.push({press:[st.code],hold:holdOf(st),txt});
+    });
+    return {kind:'key',list:out};
+  }
+  if(ALT[ch]&&laptop()){
+    out.push({press:[],hold:['AltLeft','Fn'],txt:'Maintenez '+MC('Alt')+' + '+MC('Fn')+' enfoncées'});
+    Array.from(ALT[ch]).forEach(d=>{const c=EMB[d];const lab=L.keys[c][0].toUpperCase();out.push({press:[c],hold:['AltLeft','Fn'],txt:'tapez '+KC(d)+(c.startsWith('Key')?' <small>(touche '+esc(lab)+')</small>':'')});});
+    out.push({press:[],hold:[],txt:'relâchez tout : '+KC(ch)+' apparaît'});
+    return {kind:'alt',list:out};
+  }
+  if(ALT[ch]){
+    out.push({press:[],hold:['AltLeft'],txt:'Maintenez '+MC('Alt')+' (gauche) enfoncée'});
+    Array.from(ALT[ch]).forEach(d=>out.push({press:['Numpad'+d],hold:['AltLeft'],txt:'tapez '+KC(d)+' sur le pavé numérique'}));
+    out.push({press:[],hold:[],txt:'relâchez '+MC('Alt')+' : '+KC(ch)+' apparaît'});
+    return {kind:'alt',list:out};
+  }
+  out.push({press:['Period'],hold:['MetaLeft'],txt:MC('Win')+' + '+KC('.')+' ouvre le panneau Emoji et symboles'});
+  out.push({press:[],hold:[],txt:'onglet <b>Ω Symboles</b>, cherchez '+KC(ch)+' et cliquez'});
+  return {kind:'win',list:out};
+}
+
+/* ---------- Entraînement ---------- */
+const kbT=$('kbTrain'),kbC=$('kbChars'),hid=$('hidden');
+let S=null,deadPending=false,timer=null;
+function newSession(){
+  const L=lay(),les=LESSONS.find(l=>l.id===store.lesson)||LESSONS[0];
+  $('customBox').hidden=!(les.id==='custom'&&!customText);
+  let t=sanitize(L,les.gen(L));
+  if(!t&&les.id==='weak')t=sanitize(L,'Pas encore assez de données : terminez quelques textes pour que vos points faibles apparaissent ici.');
+  S={text:Array.from(t),pos:0,err:new Set(),errors:0,start:0,end:0,errChars:{},done:false};
+  deadPending=false;clearInterval(timer);timer=null;$('result').hidden=true;
+  renderText();updateStats();showNext();
+}
+function renderText(){
+  const p=$('text');let h='';
+  S.text.forEach((c,i)=>{let cl=i<S.pos?'done':i===S.pos?'cur':'';if(S.err.has(i))cl+=' bad';if(c===' ')cl+=' sp';h+='<span class="'+cl.trim()+'">'+(c===' '&&i===S.pos?'':esc(c))+'</span>';});
+  p.innerHTML=h;
+  const cur=p.querySelector('.cur');if(cur)p.scrollTop=Math.max(0,cur.offsetTop-p.offsetTop-p.clientHeight/3);
+}
+function showNext(){
+  const L=lay();
+  if(!S||S.done||S.pos>=S.text.length){clearHl(kbT);$('hint').innerHTML='';return;}
+  const ch=S.text[S.pos],c=combo(L,ch);if(!c){$('hint').innerHTML='';clearHl(kbT);return;}
+  const i=deadPending&&c[1]?1:0,st=c[i];
+  let h='Prochain : <span class="ch">'+esc(ch===' '?'␣':ch)+'</span> → '+stepKeys(L,c[0]);
+  if(c[1])h+=' puis '+stepKeys(L,c[1]);
+  if(FINGER[st.code])h+=' <small>· '+FNAMES[FINGER[st.code]]+'</small>';
+  $('hint').innerHTML=h;hlCodes(kbT,[st.code],holdOf(st));
+}
+function rec(ch,bad){const id=store.layout;store.stats[id]=store.stats[id]||{};const v=store.stats[id][ch]||[0,0];v[0]++;if(bad)v[1]++;store.stats[id][ch]=v;}
+function typeChar(c){
+  if(!S||S.done||!S.text.length||c==='\n'||c==='\r')return;
+  if(!S.start){S.start=performance.now();timer=setInterval(updateStats,300);}
+  const exp=S.text[S.pos];
+  if(c===exp||(exp===' '&&c==='\u00a0')){rec(exp,S.err.has(S.pos));S.pos++;}
+  else{S.errors++;S.err.add(S.pos);S.errChars[exp]=(S.errChars[exp]||0)+1;const cc=combo(lay(),c);if(cc)flash(kbT,cc[cc.length-1].code,'wrong');}
+  if(S.pos>=S.text.length)finish();
+  renderText();updateStats();
+}
+function metrics(){const end=S.end||performance.now(),min=S.start?(end-S.start)/60000:0,wpm=min>0.02?Math.round(S.pos/5/min):0,tot=S.pos+S.errors;return{wpm,acc:tot?Math.round(S.pos/tot*100):100,sec:Math.round(min*60)};}
+function updateStats(){const m=metrics();$('sWpm').textContent=m.wpm;$('sAcc').textContent=m.acc;$('sErr').textContent=S.errors;$('sProg').textContent=S.pos;$('sProgL').textContent='/ '+S.text.length+' caractères';}
+function finish(){
+  S.done=true;S.end=performance.now();clearInterval(timer);timer=null;
+  const m=metrics(),les=LESSONS.find(l=>l.id===store.lesson);
+  store.hist.push({t:Date.now(),lesson:les.t,layout:lay().name,wpm:m.wpm,acc:m.acc});if(store.hist.length>200)store.hist.shift();save();
+  const top=Object.entries(S.errChars).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const r=$('result');
+  r.innerHTML='<h3>Texte terminé</h3><div class="bar"><div class="stat"><strong>'+m.wpm+'</strong><small>mots/min</small></div><div class="stat"><strong>'+m.acc+'</strong><small>% précision</small></div><div class="stat"><strong>'+m.sec+'</strong><small>secondes</small></div></div>'+
+   (top.length?'<div class="hint">Erreurs sur : '+top.map(([c,n])=>KC(c===' '?'␣':c)+'<small>×'+n+'</small>').join(' ')+'</div>':'<div class="hint">Aucune erreur. Passez à la leçon suivante.</div>')+
+   '<div class="acts"><button class="btn primary" id="rNew">Nouveau texte (Entrée)</button><button class="btn" id="rAgain">Refaire le même (Échap)</button></div>';
+  r.hidden=false;showNext();
+  $('rNew').onclick=()=>{newSession();hid.focus();};$('rAgain').onclick=()=>{again();hid.focus();};
+}
+function again(){const t=S.text;newSession();S.text=t;renderText();updateStats();showNext();}
+let composing=false;
+hid.addEventListener('compositionstart',()=>composing=true);
+hid.addEventListener('compositionend',()=>{composing=false;consume();});
+hid.addEventListener('input',e=>{if(composing||e.isComposing)return;consume();});
+function consume(){const v=hid.value;hid.value='';if(v&&!pop.hidden){stopAnim();pop.hidden=true;}deadPending=false;for(const c of Array.from(v))typeChar(c);showNext();}
+/* détection de la disposition réellement active dans Windows */
+const DET={Minus:{"'":['ch-de','ch-fr'],'ß':['de'],')':['fr'],'-':['us']},Semicolon:{'ö':['ch-de','de'],'é':['ch-fr'],'m':['fr'],';':['us']},
+ Backquote:{'§':['ch-de','ch-fr'],'²':['fr'],'`':['us']},KeyZ:{'y':['ch-de','ch-fr','de'],'w':['fr'],'z':['us']}};
+let detSet=null,detDismiss=false;
+function detect(e){
+  if(e.shiftKey||e.ctrlKey||e.altKey||e.metaKey||!DET[e.code])return;
+  const c=DET[e.code][e.key];if(!c)return;
+  detSet=detSet?detSet.filter(x=>c.includes(x)):c.slice();if(!detSet.length)detSet=c.slice();
+  if(detSet.length===1&&detSet[0]!==store.layout&&!detDismiss){
+    const id=detSet[0],b=$('detect');
+    b.innerHTML='<span>Votre Windows tape en <b>'+LAYOUTS[id].name+'</b>, mais l\'appli est réglée sur <b>'+lay().name+'</b>.</span><button class="btn primary" id="detGo">Utiliser '+LAYOUTS[id].name+'</button><button class="btn" id="detNo">Ignorer</button>';
+    b.hidden=false;
+    $('detGo').onclick=()=>{store.layout=id;save();b.hidden=true;refreshAll();hid.focus();};
+    $('detNo').onclick=()=>{detDismiss=true;b.hidden=true;};
+  }
+}
+hid.addEventListener('keydown',e=>{
+  detect(e);
+  flash(kbT,e.code,'press');
+  if(e.key==='Dead'){deadPending=true;showNext();}
+  if(S&&S.done){if(e.key==='Enter'){e.preventDefault();newSession();}else if(e.key==='Escape'){e.preventDefault();again();}return;}
+  if(e.key==='Escape'){e.preventDefault();if(!pop.hidden){closePop();return;}again();}
+  if(e.key==='Tab')e.preventDefault();
+});
+hid.addEventListener('focus',()=>{$('typebox').classList.add('focused');$('blurOv').hidden=true;});
+hid.addEventListener('blur',()=>{$('typebox').classList.remove('focused');$('blurOv').hidden=false;});
+$('btnNew').onclick=()=>{newSession();hid.focus();};
+$('customGo').onclick=()=>{customText=$('customTxt').value.replace(/\s+/g,' ').trim();if(customText){newSession();hid.focus();}};
+function renderLegend(){
+  $('legend').innerHTML='<label class="lab"><input type="checkbox" id="fingersT" '+(store.fingers?'checked':'')+'> Couleurs des doigts</label>'+
+   (store.fingers?[1,2,3,4,5,6,7,8].map(f=>'<span><i style="background:var(--f'+f+')"></i>'+FNAMES[f]+'</span>').join(''):'')+
+   '<span><b style="color:var(--swiss)">rouge</b> = touche morte</span><span>Échap = recommencer</span>';
+  $('fingersT').onchange=e=>{store.fingers=e.target.checked;save();renderKb(kbT,lay(),store.fingers);renderLegend();showNext();};
+}
+function renderSelects(){
+  $('laySel').innerHTML=Object.entries(LAYOUTS).map(([id,L])=>'<option value="'+id+'"'+(id===store.layout?' selected':'')+'>'+L.name+'</option>').join('');
+  let g='',h='';LESSONS.forEach(l=>{if(l.g!==g){if(g)h+='</optgroup>';g=l.g;h+='<optgroup label="'+g+'">';}h+='<option value="'+l.id+'"'+(l.id===store.lesson?' selected':'')+'>'+esc(l.t)+'</option>';});
+  $('lesSel').innerHTML=h+'</optgroup>';
+}
+$('laySel').onchange=e=>{store.layout=e.target.value;save();refreshAll();};
+$('modSel').onchange=e=>{store.model=e.target.value;save();refreshAll();};
+$('lesSel').onchange=e=>{store.lesson=e.target.value;save();newSession();if(store.lesson!=='custom'||customText)hid.focus();};
+
+/* ---------- Caractères cachés ---------- */
+let cur='@',anim=null,animIdx=0,query='';
+function renderFamTabs(){
+  const L=lay();
+  $('famTabs').innerHTML=FAMS.map(f=>{const n=CHARS.filter(([c])=>family(L,c)===f.id).length;return'<button role="tab" data-f="'+f.id+'" aria-selected="'+(!query&&f.id===store.fam)+'">'+f.t+'<small>'+n+'</small></button>';}).join('');
+  $('famTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{store.fam=b.dataset.f;save();query='';$('findIn').value='';renderFamTabs();renderChips();});
+  $('famDesc').textContent=query?'Résultats de recherche':FAMS.find(f=>f.id===store.fam).d;
+}
+function renderChips(){
+  const L=lay(),q=query.toLowerCase();
+  const list=q?CHARS.filter(([c,n])=>n.toLowerCase().includes(q)||c===query):CHARS.filter(([c])=>family(L,c)===store.fam);
+  $('chips').innerHTML=list.length?list.map(([c,n])=>'<button class="chip" data-c="'+esc(c)+'" title="'+esc(n)+'" aria-pressed="'+(c===cur)+'">'+esc(c)+'</button>').join(''):'<p class="empty">Aucun caractère trouvé.</p>';
+  $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>select(b.dataset.c));
+}
+function select(c){cur=c;$('chips').querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===c));renderDetail();}
+function renderDetail(){
+  const L=lay(),c=cur,sq=steps(L,c),fam=family(L,c);
+  const famT={altgr:'AltGr',shift:'Shift / direct',dead:'Touche morte',absent:'Absent du clavier'}[fam];
+  let alt='';
+  if(sq.kind==='alt'&&laptop())alt='Les chiffres viennent du pavé intégré (indices soulignés sous U I O J K L M). Si rien n\'apparaît, activez-le d\'abord (Verr Num) ou passez par '+MC('Win')+' + '+KC('.')+', onglet Ω Symboles.';
+  else if(sq.kind==='alt')alt='Sans pavé numérique : '+MC('Win')+' + '+KC('.')+', onglet Ω Symboles.';
+  else if(sq.kind==='win'&&UNI[c])alt='Dans Word : tapez '+KC(UNI[c])+' puis '+MC('Alt')+' + '+KC('X')+'.';
+  else if(fam==='dead'&&ALT[c])alt='Autre voie : '+MC('Alt')+' + '+ALT[c]+' sur le pavé numérique.';
+  const qk=qaFor(c);
+  if(qk)alt+=(alt?'<br>':'')+'Avec PowerToys Quick Accent (et dans l\'onglet Abréviations → Rédiger) : maintenez '+KC(qk)+' puis '+KC('Espace')+' jusqu\'à '+KC(c)+'.';
+  $('detail').innerHTML='<div class="det-top"><div class="glyph">'+esc(c)+'</div><div><div class="det-name">'+esc(NAME[c]||'Caractère')+'</div><span class="badge">'+famT+' · '+esc(L.name)+'</span></div></div>'+
+   '<ol class="steps" id="stepList">'+sq.list.map((s,i)=>'<li data-i="'+i+'">'+s.txt+'</li>').join('')+'</ol>'+
+   (alt?'<p class="alt">'+alt+'</p>':'')+
+   '<div class="acts"><button class="btn primary" id="replay">▶ Rejouer</button><button class="btn" id="copyB">Copier '+esc(c)+'</button><span class="toast" id="toast"></span></div>'+
+   '<input type="text" id="copyFb" readonly hidden value="'+esc(c)+'" aria-label="Caractère à copier">';
+  $('detail').querySelectorAll('#stepList li').forEach(li=>li.onclick=()=>{stopAnim();showStep(sq,+li.dataset.i,kbC,$('detail'));});
+  $('replay').onclick=()=>play(sq,kbC,$('detail'));
+  $('copyB').onclick=()=>{const done=()=>{$('toast').textContent='Copié';setTimeout(()=>{const t=$('toast');if(t)t.textContent='';},1500);};
+    try{navigator.clipboard.writeText(c).then(done,fb);}catch(e){fb();}
+    function fb(){const i=$('copyFb');i.hidden=false;i.select();$('toast').textContent='Sélectionné : Ctrl + C';}};
+  $('numpad').classList.toggle('dim',sq.kind!=='alt');
+  play(sq,kbC,$('detail'));
+}
+function showStep(sq,i,kb,root){animIdx=i;const s=sq.list[i];hlCodes(kb,s.press,s.hold);if(kb===kbC)hlCodes($('numpad'),s.press,[]);
+  root.querySelectorAll('ol.steps li').forEach(li=>li.classList.toggle('on',+li.dataset.i===i));}
+function stopAnim(){if(anim){clearInterval(anim);anim=null;}}
+/* état final : toutes les touches de la combinaison restent allumées, numérotées par étape */
+function showAll(sq,kb,root){
+  clearHl(kb);if(kb===kbC)clearHl($('numpad'));
+  sq.list.forEach((s,i)=>{
+    s.hold.forEach(c=>kb.querySelectorAll('[data-code="'+c+'"]').forEach(k=>k.classList.add('hlm')));
+    s.press.forEach(c=>[kb,kb===kbC?$('numpad'):null].forEach(z=>z&&z.querySelectorAll('[data-code="'+c+'"]').forEach(k=>{k.classList.add('hl');if(!k.dataset.step)k.dataset.step=i===0?'1er':(i+1)+'e';})));
+  });
+  root.querySelectorAll('ol.steps li').forEach(li=>li.classList.add('on'));
+}
+function play(sq,kb,root){stopAnim();const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce||sq.list.length<2){showAll(sq,kb,root);return;}
+  showStep(sq,0,kb,root);
+  anim=setInterval(()=>{if(animIdx>=sq.list.length-1){stopAnim();showAll(sq,kb,root);return;}showStep(sq,animIdx+1,kb,root);},1100);}
+
+/* bulle cliquable sur le clavier d'entraînement */
+const pop=$('pop');
+function closePop(){if(pop.hidden)return;stopAnim();pop.hidden=true;showNext();}
+function popKey(code){
+  const L=lay(),a=L.keys[code];if(!a){closePop();return;}stopAnim();
+  const lab=['Seule','Shift',L.altgr?'AltGr':'Alt'];
+  pop.innerHTML='<div class="ph"><span class="kc">'+esc(capLabel(L,{code}))+'</span><b>Cette touche produit</b><button class="x" id="popX" aria-label="Fermer">×</button></div>'+
+   '<div class="row">'+a.map((ch,lv)=>ch?'<small>'+lab[lv]+'</small><button class="chip" data-c="'+esc(ch)+'">'+esc(ch)+'</button>'+(L.dead.includes(code+':'+lv)?'<small style="color:var(--swiss)">morte</small>':''):'').join('')+'</div>'+
+   '<div id="popBody" class="fdesc">Cliquez sur un caractère pour voir sa combinaison.</div>';
+  pop.hidden=false;hlCodes(kbT,[code],[]);
+  $('popX').onclick=()=>{closePop();hid.focus();};
+  pop.querySelectorAll('.chip').forEach(b=>b.onclick=()=>popChar(b.dataset.c));
+}
+function popChar(ch){
+  const L=lay(),sq=steps(L,ch),body=$('popBody');
+  pop.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===ch));
+  body.innerHTML='<ol class="steps">'+sq.list.map((s,i)=>'<li data-i="'+i+'">'+s.txt+'</li>').join('')+'</ol>'+
+   '<div class="acts"><button class="btn primary" id="popPlay">▶ Rejouer</button><button class="btn" id="popCopy">Copier '+esc(ch)+'</button><span class="toast" id="popToast"></span></div>';
+  body.querySelectorAll('li').forEach(li=>li.onclick=()=>{stopAnim();showStep(sq,+li.dataset.i,kbT,pop);});
+  $('popPlay').onclick=()=>play(sq,kbT,pop);
+  $('popCopy').onclick=()=>{const t=$('popToast');try{navigator.clipboard.writeText(ch).then(()=>t.textContent='Copié',()=>t.textContent='Copie refusée');}catch(e){t.textContent='Copie refusée';}};
+  play(sq,kbT,pop);
+}
+kbT.addEventListener('click',e=>{const k=e.target.closest('.key');if(k)popKey(k.dataset.code);});
+/* clic sur une touche : tout ce qu'elle produit */
+kbC.addEventListener('click',e=>{
+  const k=e.target.closest('.key');if(!k)return;const L=lay(),a=L.keys[k.dataset.code];if(!a)return;stopAnim();
+  const lab=['Seule','Avec Shift','Avec '+(L.altgr?'AltGr':'Alt')];
+  const rows=a.map((ch,lv)=>ch?'<li>'+lab[lv]+' : '+'<button class="chip" data-c="'+esc(ch)+'">'+esc(ch)+'</button>'+(L.dead.includes(k.dataset.code+':'+lv)?' <small style="color:var(--swiss)">touche morte</small>':'')+'</li>':'').join('');
+  $('detail').innerHTML='<div class="det-top"><div class="glyph">'+esc(/\p{Ll}/u.test(a[0])?a[0].toUpperCase():a[0])+'</div><div><div class="det-name">Cette touche produit…</div><span class="badge">'+esc(L.name)+'</span></div></div><ol class="steps">'+rows+'</ol><p class="alt">Cliquez sur un caractère pour voir sa combinaison.</p>';
+  $('detail').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const ch=b.dataset.c;if(NAME[ch]){store.fam=family(L,ch);query='';$('findIn').value='';renderFamTabs();renderChips();}select(ch);});
+  hlCodes(kbC,[k.dataset.code],[]);hlCodes($('numpad'),[],[]);
+});
+$('findIn').addEventListener('input',e=>{const v=e.target.value.trim();const a=Array.from(v);
+  if(a.length===1){query='';const L=lay();if(NAME[v]){store.fam=family(L,v);}renderFamTabs();renderChips();select(v);return;}
+  query=v;renderFamTabs();renderChips();});
+$('findIn').addEventListener('keydown',e=>{detect(e);flash(kbC,e.code,'press');});
+
+/* ---------- Progrès ---------- */
+function renderProg(){
+  const h=store.hist.slice(-20);
+  if(h.length<2)$('spark').innerHTML='<p class="empty">Terminez au moins deux textes pour voir la courbe.</p>';
+  else{const W=520,H=140,P=30,nice=Math.ceil(Math.max(10,...h.map(x=>x.wpm))/10)*10;
+    const x=i=>P+i*(W-P-10)/(h.length-1),y=v=>H-18-(v/nice)*(H-30);
+    const pts=h.map((r,i)=>x(i).toFixed(1)+','+y(r.wpm).toFixed(1)).join(' ');
+    const grid=[0,nice/2,nice].map(v=>'<line x1="'+P+'" x2="'+(W-6)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="var(--line)"/><text x="'+(P-6)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">'+v+'</text>').join('');
+    $('spark').innerHTML='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-height:24vh" role="img" aria-label="Évolution des mots par minute">'+grid+
+     '<polygon points="'+x(0)+','+y(0)+' '+pts+' '+x(h.length-1)+','+y(0)+'" fill="var(--ink)" opacity=".07"/><polyline points="'+pts+'" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><circle cx="'+x(h.length-1)+'" cy="'+y(h[h.length-1].wpm)+'" r="4.5" fill="var(--swiss)"/></svg>';}
+  const all=store.hist;
+  $('progSum').textContent=(all.length?all.length+' textes terminés · meilleure vitesse '+Math.max(...all.map(r=>r.wpm))+' mots/min · précision moyenne '+Math.round(all.reduce((s,r)=>s+r.acc,0)/all.length)+' %. ':'')+(store.saved?savedText()+'.':'');
+  const L=lay();$('weakLay').textContent='· '+L.name;
+  const wl=weakList(store.layout);
+  $('weakList').innerHTML=wl.length?wl.map(w=>{const c=combo(L,w.c);return'<div><span class="g">'+esc(w.c)+'</span><span class="meter"><i style="width:'+Math.round(w.r*100)+'%"></i></span><small style="width:62px">'+Math.round(w.r*100)+' % d\'erreur</small><span>'+(c?stepKeys(L,c[0])+(c[1]?' puis '+stepKeys(L,c[1]):''):'')+'</span></div>';}).join(''):'<p class="empty">Aucun point faible repéré pour l\'instant sur cette disposition.</p>';
+  $('histBody').innerHTML=all.slice().reverse().slice(0,6).map(r=>'<tr><td>'+new Date(r.t).toLocaleString('fr-CH',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'</td><td>'+esc(r.lesson)+'</td><td>'+esc(r.layout)+'</td><td class="n">'+r.wpm+'</td><td class="n">'+r.acc+' %</td></tr>').join('')||'<tr><td colspan="5" class="empty">Aucune session pour l\'instant.</td></tr>';
+  resetIdle();
+}
+function resetIdle(){$('resetZone').innerHTML='<button class="btn" id="resetBtn">Effacer l\'historique</button>';$('resetBtn').onclick=()=>{
+  $('resetZone').innerHTML='<span class="fdesc" style="align-self:center">Effacer historique et statistiques ?</span><button class="btn primary" id="rsY">Oui, effacer</button><button class="btn" id="rsN">Annuler</button>';
+  $('rsY').onclick=()=>{store.hist=[];store.stats={};save();renderProg();};$('rsN').onclick=resetIdle;};}
+/* ----- sauvegarde / restauration ----- */
+const LOCALFILE=location.protocol==='file:';
+$('bkDl').hidden=!LOCALFILE;
+function bkJson(){return JSON.stringify({app:'frappe-juste',v:1,date:new Date().toISOString(),store},null,1);}
+$('bkMake').onclick=()=>{$('bkTxt').value=bkJson();toastIn('bkMsg','Sauvegarde prête');};
+$('bkCopy').onclick=()=>{const v=$('bkTxt').value||bkJson();$('bkTxt').value=v;try{navigator.clipboard.writeText(v).then(()=>toastIn('bkMsg','Copié'),()=>{$('bkTxt').select();toastIn('bkMsg','Sélectionné : Ctrl + C');});}catch(e){$('bkTxt').select();}};
+$('bkDl').onclick=()=>{const b=new Blob([bkJson()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='frappe-juste-sauvegarde.json';document.body.appendChild(a);a.click();a.remove();toastIn('bkMsg','Choisissez la clé USB comme destination');};
+$('bkFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('bkTxt').value=r.result;bkAsk();};r.readAsText(f);e.target.value='';};
+function bkAsk(){
+  let d;try{d=JSON.parse($('bkTxt').value);}catch(e){toastIn('bkMsg','Ce texte n\'est pas une sauvegarde valide.');return;}
+  if(!d||d.app!=='frappe-juste'||!d.store){toastIn('bkMsg','Ce fichier ne vient pas de Frappe Juste.');return;}
+  $('bkActs').innerHTML='<span class="fdesc" style="align-self:center">Remplacer les données de ce poste par la sauvegarde du '+esc(new Date(d.date).toLocaleDateString('fr-CH'))+' ?</span><button class="btn primary" id="bkY">Restaurer</button><button class="btn" id="bkN">Annuler</button>';
+  $('bkY').onclick=()=>{store=Object.assign(store,d.store);save();bkIdle();refreshAll();renderProg();toastIn('bkMsg','Données restaurées');};
+  $('bkN').onclick=bkIdle;
+}
+function bkIdle(){$('bkActs').innerHTML='<button class="btn" id="bkCopy2">Copier</button><button class="btn" id="bkRestore2">Restaurer depuis ce texte</button><span class="toast" id="bkMsg"></span>';
+  $('bkCopy2').onclick=$('bkCopy')?$('bkCopy').onclick:null;$('bkCopy2').onclick=()=>{$('bkTxt').select();try{navigator.clipboard.writeText($('bkTxt').value);toastIn('bkMsg','Copié');}catch(e){}};$('bkRestore2').onclick=bkAsk;}
+$('bkRestore').onclick=bkAsk;
+$('weakGo').onclick=()=>{store.lesson='weak';save();renderSelects();showTab('train');newSession();hid.focus();};
+
+/* ================= ABRÉVIATIONS ================= */
+const SEED=[
+ ['Caractères','<<','« '],['Caractères','>>',' »'],['Caractères',';oe','œ'],['Caractères',';OE','Œ'],['Caractères','--','—'],
+ ['Caractères',';no','n°'],['Caractères',';deg','°'],['Caractères',';tm','™'],['Caractères',';r','®'],['Caractères',';c','©'],['Caractères',';x','×'],
+ ['Courriels',';bj','Bonjour {choix:Madame|Monsieur|à tous},\n\n{curseur}'],
+ ['Courriels',';cdt','Avec mes meilleures salutations,\n\nJustin Fabrice MANGA ZAMBO'],
+ ['Courriels',';merci','Je vous remercie par avance de votre retour et reste à votre disposition pour tout complément d\'information.'],
+ ['Courriels',';pj','Veuillez trouver ci-joint {champ:Document}.'],
+ ['Courriels',';rdv','Je vous propose de nous rencontrer le {champ:Jour} à {champ:Heure}.'],
+ ['Courriels',';auj','{date}'],
+ ['Juridique',';oapi','Organisation Africaine de la Propriété Intellectuelle (OAPI)'],
+ ['Juridique',';ompi','Organisation Mondiale de la Propriété Intellectuelle (OMPI)'],
+ ['Juridique',';bangui','Accord de Bangui (Acte de Bamako, 2015)'],
+ ['Juridique',';madrid','Protocole relatif à l\'Arrangement de Madrid concernant l\'enregistrement international des marques'],
+ ['Juridique',';ei','enregistrement international'],
+ ['Juridique',';rp','refus provisoire de protection'],
+ ['Juridique',';ref','N/Réf. : {champ:Référence}']];
+if(!Array.isArray(store.snips))store.snips=SEED.map(([g,a,t],i)=>({id:'s'+i,g,a,t}));
+store.saved=store.saved||0;store.corpus=store.corpus||'';store.abSub=store.abSub||'write';store.exFmt=store.exFmt||'comp';
+
+const PH=/\{(date(?::court)?|heure|curseur|champ:[^}]+|choix:[^}]+)\}/g;
+function fieldsOf(t){const out=[],seen=new Set();for(const m of t.matchAll(PH)){const p=m[1];if(p.startsWith('champ:')||p.startsWith('choix:')){if(seen.has(p))continue;seen.add(p);out.push(p.startsWith('champ:')?{key:p,kind:'champ',label:p.slice(6)}:{key:p,kind:'choix',label:'Choix',opts:p.slice(6).split('|')});}}return out;}
+const dLong=()=>new Date().toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});
+const dShort=()=>new Date().toLocaleDateString('fr-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
+const hNow=()=>new Date().toLocaleTimeString('fr-CH',{hour:'2-digit',minute:'2-digit'});
+/* vals=null → aperçu */
+function renderSnip(t,vals){
+  let cursor=-1,out='';let last=0;
+  for(const m of t.matchAll(PH)){out+=t.slice(last,m.index);last=m.index+m[0].length;const p=m[1];
+    if(p==='date')out+=dLong();else if(p==='date:court')out+=dShort();else if(p==='heure')out+=hNow();
+    else if(p==='curseur'){if(vals)cursor=out.length;else out+='│';}
+    else if(p.startsWith('champ:'))out+=vals?(vals[p]||''):'['+p.slice(6)+']';
+    else out+=vals?(vals[p]||''):'['+p.slice(6).replace(/\|/g,' / ')+']';}
+  out+=t.slice(last);return{text:out,cursor};
+}
+function capFirst(s){const i=s.search(/\p{L}/u);return i<0?s:s.slice(0,i)+s[i].toUpperCase()+s.slice(i+1);}
+function findSnip(tok){
+  let s=store.snips.find(x=>x.a===tok);if(s)return{s,cap:false};
+  const lo=tok.toLowerCase();if(lo!==tok){s=store.snips.find(x=>x.a===lo);if(s)return{s,cap:true};}
+  return null;
+}
+function avgWpm(){const h=store.hist.slice(-10);return h.length?h.reduce((a,r)=>a+r.wpm,0)/h.length:0;}
+function savedText(){const w=avgWpm()||35,min=store.saved/5/w;return store.saved+' caractères économisés grâce aux abréviations (≈ '+(min<1?Math.round(min*60)+' s':Math.round(min)+' min')+' à '+Math.round(w)+' mots/min)';}
+
+/* ----- Rédiger ----- */
+const wT=$('wText');
+let lastExp=null,pending=null,draftT=null;
+try{wT.value=store.draft||'';}catch(e){}
+function updSaved(){$('wSaved').textContent=savedText();}
+function toastIn(id,msg){const t=$(id);if(!t)return;t.textContent=msg;setTimeout(()=>{if($(id))$(id).textContent='';},1800);}
+function addCorpus(txt){if(!txt.trim())return;store.corpus=(store.corpus+'\n'+txt).slice(-30000);save();}
+wT.addEventListener('input',e=>{
+  clearTimeout(draftT);draftT=setTimeout(()=>{store.draft=wT.value;save();},600);
+  if(pending)return;
+  if(!e.inputType||!e.inputType.startsWith('insert')){lastExp=null;return;}
+  const pos=wT.selectionStart,v=wT.value,d=v[pos-1];
+  if(d!==' '&&d!=='\n'){lastExp=null;return;}
+  const m=v.slice(0,pos-1).match(/(\S+)$/);if(!m)return;
+  const f=findSnip(m[1]);if(!f)return;
+  const ctx={start:pos-1-m[1].length,end:pos,tok:m[1],delim:d,f,typed:true};
+  const fl=fieldsOf(f.s.t);if(fl.length)openFill(ctx,fl);else applyExp(ctx,{});
+});
+function applyExp(ctx,vals){
+  const r=renderSnip(ctx.f.s.t,vals);let txt=r.text;if(ctx.f.cap)txt=capFirst(txt);
+  const drop=r.cursor>=0||/[\s ]$/.test(txt)||!ctx.delim;
+  const ins=txt+(drop?'':ctx.delim),before=wT.value,v=wT.value;
+  wT.value=v.slice(0,ctx.start)+ins+v.slice(ctx.end);
+  const caret=ctx.start+(r.cursor>=0?r.cursor:ins.length);
+  wT.focus();wT.setSelectionRange(caret,caret);
+  const gain=ctx.typed?Math.max(0,txt.length-ctx.tok.length):0;
+  store.saved+=gain;store.draft=wT.value;save();updSaved();
+  lastExp={before,caret:ctx.end,after:wT.value,gain};
+}
+function openFill(ctx,fl){
+  pending=ctx;const fb=$('fillBar');
+  fb.innerHTML='<span class="fdesc" style="width:100%">Compléter <b style="font-family:var(--mono)">'+esc(ctx.f.s.a)+'</b></span>'+
+   fl.map((f,i)=>'<label for="fill-'+i+'">'+esc(f.label)+(f.kind==='choix'?'<select id="fill-'+i+'" data-k="'+esc(f.key)+'">'+f.opts.map(o=>'<option>'+esc(o)+'</option>').join('')+'</select>':'<input type="text" id="fill-'+i+'" data-k="'+esc(f.key)+'" autocomplete="off">')+'</label>').join('')+
+   '<button class="btn primary" id="fillOk">Insérer (Entrée)</button><button class="btn" id="fillNo">Annuler (Échap)</button>';
+  fb.hidden=false;
+  const submit=()=>{const vals={};fb.querySelectorAll('[data-k]').forEach(el=>vals[el.dataset.k]=el.value);fb.hidden=true;pending=null;applyExp(ctx,vals);};
+  const cancel=()=>{fb.hidden=true;pending=null;wT.focus();wT.setSelectionRange(ctx.end,ctx.end);};
+  $('fillOk').onclick=submit;$('fillNo').onclick=cancel;
+  fb.querySelectorAll('[data-k]').forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submit();}else if(e.key==='Escape'){e.preventDefault();cancel();}}));
+  $('fill-0').focus();
+}
+$('wCopy').onclick=()=>{const v=wT.value;addCorpus(v);try{navigator.clipboard.writeText(v).then(()=>toastIn('wToast','Copié'),()=>{wT.select();toastIn('wToast','Sélectionné : Ctrl + C');});}catch(e){wT.select();toastIn('wToast','Sélectionné : Ctrl + C');}};
+function clearIdle(){$('wClearZone').innerHTML='<button class="btn" id="wClear">Effacer</button>';$('wClear').onclick=()=>{
+  $('wClearZone').innerHTML='<button class="btn primary" id="wClY">Effacer le texte</button> <button class="btn" id="wClN">Annuler</button>';
+  $('wClY').onclick=()=>{addCorpus(wT.value);wT.value='';store.draft='';save();clearIdle();wT.focus();};$('wClN').onclick=clearIdle;};}
+function renderWList(){
+  const q=$('wFind').value.trim().toLowerCase();
+  const l=store.snips.filter(s=>!q||s.a.toLowerCase().includes(q)||s.t.toLowerCase().includes(q)||s.g.toLowerCase().includes(q));
+  $('wList').innerHTML=l.map(s=>'<button class="sitem" data-id="'+s.id+'"><code>'+esc(s.a)+'</code><span>'+esc(renderSnip(s.t,null).text.replace(/\n/g,' ⏎ '))+'</span></button>').join('')||'<p class="empty">Aucune abréviation.</p>';
+  $('wList').querySelectorAll('.sitem').forEach(b=>b.onclick=()=>{const s=store.snips.find(x=>x.id===b.dataset.id);const p=wT.selectionStart;
+    const ctx={start:p,end:wT.selectionEnd,tok:'',delim:'',f:{s,cap:false},typed:false};const fl=fieldsOf(s.t);if(fl.length)openFill(ctx,fl);else applyExp(ctx,{});});
+}
+$('wFind').addEventListener('input',renderWList);
+
+/* ----- Quick Accent (façon PowerToys) ----- */
+const ACC={a:'àâäæáãå',e:'éèêë€',i:'îïíì',o:'ôöœóòõø',u:'ùûüú',c:'ç©¢',n:'ñ',y:'ÿý',s:'ß§',t:'™',r:'®',x:'×',
+ 'é':'èêë','è':'éêë','à':'âäæ','ö':'ôœ','ü':'ûù','ä':'âæ',
+ '<':'«≤‹','>':'»≥›','-':'–—±','.':'…•·',"'":'’‘','"':'“”«»','/':'÷','=':'≠≈','0':'°','1':'¹½¼','2':'²','3':'³¾','!':'¡','?':'¿','$':'€£¥','*':'•†'};
+function accList(k){if(ACC[k])return Array.from(ACC[k]);const l=k.toLowerCase();if(l!==k&&ACC[l])return Array.from(ACC[l]).map(c=>{const u=c.toUpperCase();return u.length===1?u:c;});return null;}
+function qaFor(c){for(const k in ACC){if(ACC[k].includes(c))return k;const u=accList(k.toUpperCase());if(/\p{L}/u.test(k)&&u&&u.includes(c))return k.toUpperCase();}return null;}
+let qa={code:null};
+function renderQA(){const b=$('qaBar');if(!qa.open){b.hidden=true;return;}
+  b.innerHTML=qa.list.map((c,i)=>'<button class="chip" data-i="'+i+'" aria-pressed="'+(i===qa.idx)+'">'+esc(c)+'</button>').join('');b.hidden=false;
+  b.querySelectorAll('.chip').forEach(x=>{x.onmousedown=e=>e.preventDefault();x.onclick=()=>{qa.idx=+x.dataset.i;applyQA();};});}
+function applyQA(){
+  const ch=qa.list[qa.idx],p=wT.selectionStart,v=wT.value;
+  const rep=v[p-1]===qa.key?1:0;
+  wT.value=v.slice(0,p-rep)+ch+v.slice(p);const c=p-rep+ch.length;wT.setSelectionRange(c,c);
+  qa={code:null};renderQA();lastExp=null;store.draft=wT.value;save();
+}
+wT.addEventListener('keydown',e=>{
+  if(e.key==='Backspace'&&lastExp&&wT.value===lastExp.after){e.preventDefault();wT.value=lastExp.before;wT.setSelectionRange(lastExp.caret,lastExp.caret);store.saved=Math.max(0,store.saved-lastExp.gain);lastExp=null;updSaved();save();return;}
+  if(qa.code&&!qa.open&&e.code==='Space'&&performance.now()-qa.t<300)qa={code:null};
+  if(qa.code&&(e.code==='Space'||e.code==='ArrowRight'||e.code==='ArrowLeft')){
+    e.preventDefault();const back=e.code==='ArrowLeft'||e.shiftKey;
+    if(!qa.open){qa.open=true;qa.idx=back?qa.list.length-1:0;}else qa.idx=(qa.idx+(back?-1:1)+qa.list.length)%qa.list.length;
+    renderQA();return;}
+  if(qa.open&&e.key==='Escape'){e.preventDefault();qa={code:null};renderQA();return;}
+  if(e.key.length===1&&!e.ctrlKey&&!e.altKey&&!e.metaKey){const l=accList(e.key);
+    if(l){if(e.repeat&&qa.code===e.code){e.preventDefault();return;}qa={code:e.code,key:e.key,list:l,open:false,idx:0,t:performance.now()};}else qa={code:null};}
+});
+wT.addEventListener('keyup',e=>{if(qa.code&&e.code===qa.code){if(qa.open)applyQA();else qa={code:null};}});
+wT.addEventListener('blur',()=>{if(qa.open){qa={code:null};renderQA();}});
+
+/* ----- Bibliothèque ----- */
+let libSel=null,libG='Tous',libDraft=null;
+function renderLib(){
+  const groups=[...new Set(store.snips.map(s=>s.g))];
+  if(libG!=='Tous'&&!groups.includes(libG))libG='Tous';
+  $('libGroups').innerHTML=['Tous',...groups].map(g=>'<button data-g="'+esc(g)+'" aria-selected="'+(g===libG)+'">'+esc(g)+'<small>'+(g==='Tous'?store.snips.length:store.snips.filter(s=>s.g===g).length)+'</small></button>').join('');
+  $('libGroups').querySelectorAll('button').forEach(b=>b.onclick=()=>{libG=b.dataset.g;renderLib();});
+  const l=store.snips.filter(s=>libG==='Tous'||s.g===libG);
+  $('libList').innerHTML=l.map(s=>'<button class="sitem" data-id="'+s.id+'" aria-current="'+(s.id===libSel)+'"><code>'+esc(s.a)+'</code><span>'+esc(s.t.replace(/\n/g,' ⏎ '))+'</span></button>').join('')||'<p class="empty">Aucune abréviation dans ce groupe.</p>';
+  $('libList').querySelectorAll('.sitem').forEach(b=>b.onclick=()=>{libSel=b.dataset.id;libDraft=null;renderLib();});
+  $('ed-glist').innerHTML=groups.map(g=>'<option value="'+esc(g)+'">').join('');
+  const s=libSel?store.snips.find(x=>x.id===libSel):(libDraft||{g:libG==='Tous'?'Mes abréviations':libG,a:'',t:''});
+  $('edTitle').textContent=libSel?'Modifier '+s.a:'Nouvelle abréviation';
+  $('ed-a').value=s.a;$('ed-g').value=s.g;$('ed-t').value=s.t;edPreview();
+  delIdle();
+}
+function edPreview(){const t=$('ed-t').value;$('edPrev').innerHTML=t?'Aperçu : <span style="color:var(--ink)">'+esc(renderSnip(t,null).text).replace(/\n/g,'<br>')+'</span>':'';}
+$('ed-t').addEventListener('input',edPreview);
+document.querySelectorAll('.ph-ins').forEach(b=>b.onclick=()=>{const ta=$('ed-t'),p=ta.selectionStart,v=ta.value,ph=b.dataset.ph;ta.value=v.slice(0,p)+ph+v.slice(ta.selectionEnd);ta.focus();
+  const m=ph.match(/^\{(?:champ|choix):/);if(m){ta.setSelectionRange(p+m[0].length,p+ph.length-1);}else ta.setSelectionRange(p+ph.length,p+ph.length);edPreview();});
+$('libNew').onclick=()=>{libSel=null;libDraft=null;renderLib();$('ed-a').focus();};
+$('edSave').onclick=()=>{
+  const a=$('ed-a').value.trim(),g=$('ed-g').value.trim()||'Mes abréviations',t=$('ed-t').value;
+  if(!a||/\s/.test(a)){toastIn('edMsg','L\'abréviation doit être un mot sans espace.');$('edMsg').className='toast warn';return;}
+  if(!t){toastIn('edMsg','Le texte développé est vide.');$('edMsg').className='toast warn';return;}
+  if(store.snips.some(x=>x.a===a&&x.id!==libSel)){toastIn('edMsg','« '+a+' » existe déjà.');$('edMsg').className='toast warn';return;}
+  if(libSel){Object.assign(store.snips.find(x=>x.id===libSel),{a,g,t});}else{libSel='s'+Date.now();store.snips.push({id:libSel,a,g,t});}
+  libDraft=null;save();renderLib();renderWList();$('edMsg').className='toast';toastIn('edMsg','Enregistré');
+};
+function delIdle(){const z=$('edDelZone');if(!libSel){z.innerHTML='';return;}z.innerHTML='<button class="btn" id="edDel">Supprimer</button>';
+  $('edDel').onclick=()=>{z.innerHTML='<button class="btn primary" id="edDelY">Confirmer la suppression</button> <button class="btn" id="edDelN">Annuler</button>';
+    $('edDelY').onclick=()=>{store.snips=store.snips.filter(x=>x.id!==libSel);libSel=null;save();renderLib();renderWList();};$('edDelN').onclick=delIdle;};}
+
+/* ----- S'entraîner ----- */
+let dr={cur:null,ok:0,tot:0,done:false};
+function drNext(){
+  if(!store.snips.length){$('drPrompt').textContent='Aucune abréviation enregistrée.';return;}
+  let s;do{s=rnd(store.snips);}while(store.snips.length>1&&dr.cur&&s.id===dr.cur.id);
+  dr.cur=s;dr.done=false;$('drGroup').textContent=s.g;$('drPrompt').textContent=renderSnip(s.t,null).text;
+  $('dr-in').value='';$('drFb').innerHTML='';$('dr-in').focus();
+}
+function drCheck(){
+  if(!dr.cur)return;if(dr.done){drNext();return;}
+  const v=$('dr-in').value.trim();if(!v)return;dr.tot++;dr.done=true;
+  if(v===dr.cur.a){dr.ok++;$('drFb').innerHTML='<span class="ok">Exact.</span> Entrée pour la suivante.';}
+  else $('drFb').innerHTML='<span class="warn">Non :</span> l\'abréviation est '+KC(dr.cur.a)+'. Entrée pour la suivante.';
+  $('drScore').textContent=dr.ok+' / '+dr.tot;
+}
+$('drCheck').onclick=drCheck;$('drNext').onclick=drNext;
+$('dr-in').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();drCheck();}});
+
+/* ----- Suggestions ----- */
+function suggestions(){
+  const txt=(store.corpus+'\n'+wT.value).toLowerCase();
+  const known=new Set(store.snips.map(s=>s.t.toLowerCase()));
+  const cnt=new Map();
+  txt.split(/[.!?;:\n]+/).forEach(sen=>{const w=sen.replace(/[,()«»"“”]/g,' ').split(/\s+/).filter(Boolean);
+    for(let n=3;n<=8;n++)for(let i=0;i+n<=w.length;i++){const p=w.slice(i,i+n).join(' ');if(p.length<18)continue;cnt.set(p,(cnt.get(p)||0)+1);}});
+  let l=[...cnt].filter(([p,c])=>c>=2&&!known.has(p)).map(([p,c])=>({p,c,score:(c-1)*p.length})).sort((a,b)=>b.score-a.score);
+  const out=[];for(const x of l){if(out.some(o=>o.p.includes(x.p)&&o.c>=x.c))continue;out.push(x);if(out.length>=10)break;}
+  return out;
+}
+function renderSugg(){
+  const l=suggestions();
+  $('suggList').innerHTML=l.length?l.map((x,i)=>'<div class="sitem" style="cursor:default"><code>×'+x.c+'</code><b>'+esc(x.p)+'</b><button class="btn" data-i="'+i+'">Créer l\'abréviation</button></div>').join('')
+   :'<p class="empty">Pas encore assez de texte. Rédigez et copiez quelques courriels dans l\'onglet Rédiger : les expressions répétées apparaîtront ici.</p>';
+  $('suggList').querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{const x=l[+b.dataset.i];
+    let a=';'+x.p.split(' ').map(w=>(w.match(/\p{L}/u)||[''])[0]).join('').slice(0,6);let k=a,n=2;while(store.snips.some(s=>s.a===k))k=a+n++;
+    libSel=null;libDraft={g:'Mes abréviations',a:k,t:x.p.charAt(0).toUpperCase()+x.p.slice(1)};showAb('lib');});
+}
+
+/* ----- Export ----- */
+function parts(t){const out=[];let last=0;for(const m of t.matchAll(PH)){if(m.index>last)out.push({lit:t.slice(last,m.index)});out.push({ph:m[1]});last=m.index+m[0].length;}if(last<t.length)out.push({lit:t.slice(last)});return out;}
+function exEspanso(){
+  const L=['# Frappe Juste — abréviations pour Espanso','# Coller dans : %APPDATA%\\espanso\\match\\frappe-juste.yml','matches:'];
+  store.snips.forEach(s=>{
+    const fl=fieldsOf(s.t),fid={};fl.forEach((f,i)=>fid[f.key]='f'+(i+1));
+    let rep='';const vars=[];let needD=false,needDS=false,needH=false;
+    parts(s.t).forEach(p=>{if(p.lit!==undefined)rep+=p.lit;else if(p.ph==='date'){rep+='{{date}}';needD=true;}else if(p.ph==='date:court'){rep+='{{datecourte}}';needDS=true;}
+      else if(p.ph==='heure'){rep+='{{heure}}';needH=true;}else if(p.ph==='curseur')rep+='$|$';else rep+='{{form1.'+fid[p.ph]+'}}';});
+    L.push('  - trigger: '+JSON.stringify(s.a),'    word: true','    replace: '+JSON.stringify(rep));
+    if(fl.length||needD||needDS||needH){L.push('    vars:');
+      if(fl.length){L.push('      - name: form1','        type: form','        params:','          layout: '+JSON.stringify(fl.map(f=>f.label+' : [['+fid[f.key]+']]').join('\n')),'          fields:');
+        fl.forEach(f=>{if(f.kind==='choix')L.push('            '+fid[f.key]+':','              type: choice','              values: ['+f.opts.map(o=>JSON.stringify(o)).join(', ')+']');});}
+      if(needD)L.push('      - name: date','        type: date','        params:','          format: "%d.%m.%Y"');
+      if(needDS)L.push('      - name: datecourte','        type: date','        params:','          format: "%d.%m.%Y"');
+      if(needH)L.push('      - name: heure','        type: date','        params:','          format: "%H:%M"');}
+  });
+  return L.join('\n');
+}
+const ahkStr=s=>'"'+s.replace(/`/g,'``').replace(/"/g,'`"').replace(/;/g,'`;').replace(/\r?\n/g,'`n')+'"';
+function exAhk(){
+  const L=['#Requires AutoHotkey v2.0','; Frappe Juste — abréviations (enregistrer en .ahk puis double-cliquer)','#Hotstring EndChars `t`n ',''];
+  store.snips.forEach(s=>{
+    const fl=fieldsOf(s.t),fv={};fl.forEach((f,i)=>fv[f.key]='v'+(i+1));
+    const ps=parts(s.t);const ci=ps.findIndex(p=>p.ph==='curseur');
+    const dup=store.snips.some(x=>x.id!==s.id&&x.a.toLowerCase()===s.a.toLowerCase());
+    L.push(':'+(dup?'C':'')+'O:'+s.a+'::','{');
+    fl.forEach(f=>L.push('  '+fv[f.key]+' := InputBox('+ahkStr(f.kind==='choix'?f.opts.join(' / '):f.label)+', "Frappe Juste", , '+ahkStr(f.kind==='choix'?f.opts[0]:'')+').Value'));
+    const ex=ps.filter(p=>p.ph!=='curseur').map(p=>p.lit!==undefined?ahkStr(p.lit):p.ph==='date'?'FormatTime(, "d MMMM yyyy")':p.ph==='date:court'?'FormatTime(, "dd.MM.yyyy")':p.ph==='heure'?'FormatTime(, "HH:mm")':fv[p.ph]);
+    L.push('  SendText '+(ex.join(' . ')||'""'));
+    if(ci>=0){const n=ps.slice(ci+1).reduce((a,p)=>a+(p.lit!==undefined?p.lit.replace(/\r?\n/g,'\n').length:0),0);if(n)L.push('  Send "{Left '+n+'}"');}
+    L.push('}','');
+  });
+  return L.join('\n');
+}
+/* macro VBA : ajoute les abréviations simples à la correction automatique d'Office (partagée Word/Outlook) */
+function vbaStr(s){let out=[],buf='';for(const ch of s){const c=ch.codePointAt(0);if(c<32||c>126){if(buf){out.push('"'+buf.replace(/"/g,'""')+'"');buf='';}out.push('ChrW('+c+')');}else buf+=ch;}if(buf)out.push('"'+buf.replace(/"/g,'""')+'"');return out.join(' & ')||'""';}
+function exWord(){
+  const ok=[],skip=[];
+  store.snips.forEach(s=>{if(/\{|\n/.test(s.t)||s.t.length>255)skip.push(s.a);else ok.push(s);});
+  const L=["' Frappe Juste : abréviations pour la correction automatique de Word et Outlook","' Word : Alt + F11, Insertion > Module, coller, puis F5.",'Sub FrappeJusteCorrectionAuto()'];
+  ok.forEach(s=>L.push('    AutoCorrect.Entries.Add Name:='+vbaStr(s.a)+', Value:='+vbaStr(s.t)));
+  L.push('    MsgBox '+vbaStr(ok.length+' abréviations ajoutées à la correction automatique.'),'End Sub');
+  if(skip.length)L.push('',"' Non exportées (champs, retours à la ligne ou plus de 255 caractères) : "+skip.join(' '),"' Pour celles-là, utilisez Insertion > QuickPart dans Outlook, ou l'onglet Rédiger de Frappe Juste.");
+  return L.join('\n');
+}
+/* Compagnon portable : abréviations + Quick Accent + palette flottante (AutoHotkey v2) */
+function exCompanion(){
+  const L=lay(),pal=CHARS.map(x=>x[0]).filter(c=>family(L,c)!=='shift');
+  const accLetters=Object.keys(ACC).filter(k=>/^\p{L}$/u.test(k)||k.length===1);
+  const hs=exAhk().split('\n').slice(4).join('\n');
+  return [
+'#Requires AutoHotkey v2.0',
+'#SingleInstance Force',
+'Persistent',
+'; ============================================================',
+'; Frappe Juste — Compagnon portable (généré le '+dShort()+', clavier '+L.name+')',
+'; Clé USB : placez ce fichier à côté de AutoHotkey64.exe (version portable,',
+'; tirée du .zip officiel) sous le nom AutoHotkey64.ahk, puis double-cliquez',
+'; sur AutoHotkey64.exe. Une icône « H » apparaît près de l\'horloge.',
+';   Ctrl+Alt+P        : palette de caractères flottante',
+';   lettre maintenue + Espace (ou flèches) : accents, relâcher pour insérer',
+';   abréviation + Espace / Tab / Entrée     : développement',
+'; ============================================================',
+'#Hotstring EndChars `n `t',
+'A_IconTip := "Frappe Juste Compagnon"',
+'global QA_ON := true',
+'global Pal := ""',
+'global PAL_CHARS := ['+pal.map(ahkStr).join(', ')+']',
+'global ACC := Map('+accLetters.map(k=>ahkStr(k)+', '+ahkStr(ACC[k])).join(', ')+')',
+'global QA := {key: "", tick: 0, reps: 0, open: false, idx: 0, up: false, list: ""}',
+'',
+'; ---------- menu de l\'icône ----------',
+'A_TrayMenu.Delete()',
+'A_TrayMenu.Add("Palette de caractères (Ctrl+Alt+P)", MenuPalette)',
+'A_TrayMenu.Add("Quick Accent", MenuQA)',
+'A_TrayMenu.Check("Quick Accent")',
+'A_TrayMenu.Add("Pause", MenuPause)',
+'A_TrayMenu.Add()',
+'A_TrayMenu.Add("Recharger", (*) => Reload())',
+'A_TrayMenu.Add("Quitter", (*) => ExitApp())',
+'A_TrayMenu.Default := "Palette de caractères (Ctrl+Alt+P)"',
+'',
+'MenuPalette(*) {',
+'  TogglePalette()',
+'}',
+'MenuQA(name, *) {',
+'  global QA_ON',
+'  QA_ON := !QA_ON',
+'  A_TrayMenu.ToggleCheck(name)',
+'}',
+'MenuPause(name, *) {',
+'  Suspend(-1)',
+'  A_TrayMenu.ToggleCheck(name)',
+'}',
+'',
+'; ---------- palette flottante ----------',
+'^!p::TogglePalette()',
+'',
+'TogglePalette() {',
+'  global Pal',
+'  if IsObject(Pal) {',
+'    Pal.Destroy()',
+'    Pal := ""',
+'    return',
+'  }',
+'  Pal := Gui("+AlwaysOnTop +ToolWindow +E0x08000000", "Frappe Juste")',
+'  Pal.SetFont("s11", "Segoe UI")',
+'  for i, c in PAL_CHARS {',
+'    x := 6 + Mod(i - 1, 10) * 34',
+'    y := 6 + ((i - 1) // 10) * 34',
+'    btn := Pal.AddButton("x" x " y" y " w32 h32", c = "&" ? "&&" : c)',
+'    btn.OnEvent("Click", PalSend.Bind(c))',
+'  }',
+'  Pal.OnEvent("Close", PalClose)',
+'  rows := Ceil(PAL_CHARS.Length / 10)',
+'  w := 10 * 34 + 10',
+'  h := rows * 34 + 10',
+'  Pal.Show("NoActivate w" w " h" h " x" (A_ScreenWidth - w - 30) " y" (A_ScreenHeight - h - 90))',
+'}',
+'PalSend(c, *) {',
+'  SendText(c)',
+'}',
+'PalClose(*) {',
+'  global Pal',
+'  Pal.Destroy()',
+'  Pal := ""',
+'}',
+'',
+'; ---------- Quick Accent ----------',
+'ih := InputHook("V L0 I1")',
+'ih.KeyOpt("{All}", "N")',
+'ih.OnKeyDown := QA_Down',
+'ih.OnKeyUp := QA_Up',
+'ih.Start()',
+'',
+'QA_Down(ih, vk, sc) {',
+'  global QA, ACC, QA_ON',
+'  if !QA_ON',
+'    return',
+'  name := GetKeyName(Format("vk{:x}sc{:x}", vk, sc))',
+'  if (StrLen(name) != 1)',
+'    return',
+'  if (QA.key != "" && name = QA.key) {',
+'    QA.reps += 1',
+'    return',
+'  }',
+'  if QA.open',
+'    return',
+'  k := StrLower(name)',
+'  if ACC.Has(k) {',
+'    QA.key := name',
+'    QA.tick := A_TickCount',
+'    QA.reps := 0',
+'    QA.idx := 0',
+'    QA.up := GetKeyState("Shift")',
+'    QA.list := ACC[k]',
+'  } else',
+'    QA.key := ""',
+'}',
+'',
+'QA_Up(ih, vk, sc) {',
+'  global QA',
+'  name := GetKeyName(Format("vk{:x}sc{:x}", vk, sc))',
+'  if (QA.key = "" || name != QA.key)',
+'    return',
+'  if QA.open {',
+'    lst := QA_List()',
+'    ch := lst[QA.idx]',
+'    ToolTip()',
+'    Send("{BS " (1 + QA.reps) "}")',
+'    SendText(ch)',
+'  }',
+'  QA.key := ""',
+'  QA.open := false',
+'  QA.reps := 0',
+'}',
+'',
+'QA_List() {',
+'  global QA',
+'  lst := StrSplit(QA.list)',
+'  if QA.up {',
+'    for i, c in lst',
+'      lst[i] := StrUpper(c)',
+'  }',
+'  return lst',
+'}',
+'',
+'AccentReady() {',
+'  global QA, QA_ON',
+'  if (!QA_ON || QA.key = "")',
+'    return false',
+'  return QA.open || (A_TickCount - QA.tick >= 300)',
+'}',
+'',
+'QA_Step(d) {',
+'  global QA',
+'  lst := QA_List()',
+'  if !QA.open {',
+'    QA.open := true',
+'    QA.idx := d > 0 ? 1 : lst.Length',
+'  } else {',
+'    QA.idx += d',
+'    if (QA.idx > lst.Length)',
+'      QA.idx := 1',
+'    if (QA.idx < 1)',
+'      QA.idx := lst.Length',
+'  }',
+'  s := ""',
+'  for i, c in lst',
+'    s .= (i = QA.idx) ? " [" c "] " : "  " c "  "',
+'  if CaretGetPos(&cx, &cy)',
+'    ToolTip(s, cx, cy + 24)',
+'  else',
+'    ToolTip(s)',
+'}',
+'',
+'QA_Cancel() {',
+'  global QA',
+'  ToolTip()',
+'  QA.open := false',
+'  QA.key := ""',
+'}',
+'',
+'#HotIf AccentReady()',
+'Space::QA_Step(1)',
+'+Space::QA_Step(-1)',
+'Right::QA_Step(1)',
+'Left::QA_Step(-1)',
+'Esc::QA_Cancel()',
+'#HotIf',
+'',
+'; ---------- abréviations ----------',
+hs].join('\n');
+}
+function exCsv(){const q=s=>'"'+s.replace(/"/g,'""')+'"';return ['abréviation;contenu;groupe'].concat(store.snips.map(s=>q(s.a)+';'+q(s.t)+';'+q(s.g))).join('\n');}
+const EXNAME={comp:'AutoHotkey64.ahk',esp:'frappe-juste.yml',ahk:'frappe-juste.ahk',word:'frappe-juste-word.txt',csv:'frappe-juste.csv'};
+const EXHELP={
+ comp:'Tout Frappe Juste dans Windows, sans installation : abréviations, Quick Accent (lettre maintenue + Espace) et palette flottante (Ctrl+Alt+P). Sur la clé, dans un dossier FrappeJuste : 1) AutoHotkey64.exe, tiré du .zip v2 officiel (autohotkey.com) ; 2) ce texte enregistré sous AutoHotkey64.ahk (encodage UTF-8). Double-cliquez sur AutoHotkey64.exe : il charge le script du même nom. Après chaque modification de vos abréviations, réexportez et remplacez le fichier.',
+ esp:'Espanso est gratuit (espanso.org). Copiez ce texte dans un fichier nommé frappe-juste.yml, dans le dossier indiqué en tête. Les abréviations fonctionnent alors dans toutes les applications. Les champs et listes ouvrent une petite fenêtre.',
+ ahk:'Installez AutoHotkey v2 (autohotkey.com), collez ce texte dans un fichier frappe-juste.ahk et double-cliquez dessus. L\'abréviation se développe après Espace, Tab ou Entrée. Ajoutez le fichier au dossier Démarrage pour l\'avoir à chaque session.',
+ word:'Sans rien installer : Word et Outlook partagent la même liste de correction automatique. Dans Word, Alt + F11, Insertion > Module, collez ce texte puis F5. Si les macros sont bloquées, ajoutez les abréviations à la main : Fichier > Options > Vérification > Options de correction automatique. Elles se déclenchent après Espace.',
+ csv:'Tableau séparé par des points-virgules (abréviation ; contenu ; groupe). Collez-le dans un fichier .csv, puis utilisez la fonction d\'import de votre logiciel (aText, PhraseExpress…). Les champs {date}, {champ:…} restent à adapter à la syntaxe du logiciel.'};
+function renderExport(){
+  document.querySelectorAll('#exFmt button').forEach(b=>b.setAttribute('aria-selected',b.dataset.f===store.exFmt));
+  $('exHelp').textContent=EXHELP[store.exFmt];
+  const f=store.exFmt;
+  $('exOut').value=f==='comp'?exCompanion():f==='esp'?exEspanso():f==='ahk'?exAhk():f==='word'?exWord():exCsv();
+  $('exDl').hidden=!LOCALFILE;$('exDl').textContent='Enregistrer '+EXNAME[f];
+}
+$('exDl').onclick=()=>{const b=new Blob(['﻿'+$('exOut').value],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=EXNAME[store.exFmt];document.body.appendChild(a);a.click();a.remove();toastIn('exToast','Choisissez le dossier FrappeJuste de la clé');};
+document.querySelectorAll('#exFmt button').forEach(b=>b.onclick=()=>{store.exFmt=b.dataset.f;save();renderExport();});
+$('exCopy').onclick=()=>{const v=$('exOut').value;try{navigator.clipboard.writeText(v).then(()=>toastIn('exToast','Copié'),()=>{$('exOut').select();toastIn('exToast','Sélectionné : Ctrl + C');});}catch(e){$('exOut').select();toastIn('exToast','Sélectionné : Ctrl + C');}};
+
+/* ----- navigation interne ----- */
+const ABV=['write','lib','drill','sugg','export'];
+function showAb(v){store.abSub=v;save();ABV.forEach(x=>{$('ab-'+x).hidden=x!==v;$('abt-'+x).setAttribute('aria-selected',x===v);});
+  if(v==='write'){renderWList();updSaved();clearIdle();wT.focus();}
+  if(v==='lib')renderLib();if(v==='drill'&&!dr.cur)drNext();if(v==='drill')$('dr-in').focus();if(v==='sugg')renderSugg();if(v==='export')renderExport();}
+ABV.forEach(v=>$('abt-'+v).onclick=()=>showAb(v));
+
+/* ---------- onglets ---------- */
+const TABS=['train','chars','abbr','prog'];
+function showTab(t){TABS.forEach(x=>{$('tab-'+x).setAttribute('aria-selected',x===t);$('view-'+x).hidden=x!==t;});
+  stopAnim();if(t==='prog')renderProg();if(t==='chars')renderDetail();if(t==='train')hid.focus();if(t==='abbr')showAb(store.abSub);}
+TABS.forEach(t=>$('tab-'+t).onclick=()=>showTab(t));
+function refreshAll(){stopAnim();pop.hidden=true;
+  const mk=document.querySelector('.mark');mk.dataset.flag=store.layout.startsWith('ch')?'ch':store.layout;mk.title=lay().name;renderSelects();$('modSel').value=laptop()?'laptop':'desktop';$('numpad').hidden=laptop();renderKb(kbT,lay(),store.fingers);renderKb(kbC,lay(),false);renderLegend();renderFamTabs();renderChips();newSession();
+  if(!$('view-chars').hidden)renderDetail();if(!$('view-prog').hidden)renderProg();}
+renderNumpad();refreshAll();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+name: Compiler FrappeJuste.exe
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Télécharger AutoHotkey v2 et Ahk2Exe
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Invoke-WebRequest -Uri "https://www.autohotkey.com/download/ahk-v2.zip" -OutFile ahk.zip
+          Expand-Archive ahk.zip -DestinationPath ahk
+          gh release download --repo AutoHotkey/Ahk2Exe --pattern "*.zip" --output ahk2exe.zip
+          Expand-Archive ahk2exe.zip -DestinationPath ahk2exe
+          Get-ChildItem ahk, ahk2exe | Select-Object Name
+
+      - name: Vérifier la syntaxe du script
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "ahk\AutoHotkey64.exe" `
+               -ArgumentList '/ErrorStdOut=UTF-8', '/validate', 'companion\FrappeJuste.ahk' `
+               -Wait -PassThru -NoNewWindow `
+               -RedirectStandardOutput out.txt -RedirectStandardError err.txt
+          Get-Content out.txt, err.txt -Encoding UTF8
+          if ($p.ExitCode -ne 0) { Write-Error "Erreur de syntaxe dans FrappeJuste.ahk (code $($p.ExitCode))"; exit 1 }
+          "Syntaxe OK"
+
+      - name: Compiler
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Start-Process -FilePath "ahk2exe\Ahk2Exe.exe" `
+            -ArgumentList '/in', 'companion\FrappeJuste.ahk', '/out', 'dist\FrappeJuste.exe', '/base', "$PWD\ahk\AutoHotkey64.exe", '/silent', 'verbose' `
+            -Wait -NoNewWindow
+          if (-not (Test-Path dist\FrappeJuste.exe)) { Write-Error "Compilation échouée"; exit 1 }
+          Copy-Item app\frappe-juste.html dist\
+          Copy-Item LISEZMOI.txt dist\
+          Compress-Archive -Path dist\* -DestinationPath FrappeJuste.zip
+          Get-ChildItem dist | Select-Object Name, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FrappeJuste
+          path: dist/
+
+      - name: Publier la version
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "v1.${{ github.run_number }}"
+          gh release create $tag FrappeJuste.zip dist\FrappeJuste.exe dist\frappe-juste.html `
+            --title "Frappe Juste $tag" `
+            --notes "FrappeJuste.exe : Compagnon portable (abréviations, Quick Accent, palette Ctrl+Alt+P). frappe-juste.html : l'entraîneur, à ouvrir dans le navigateur."

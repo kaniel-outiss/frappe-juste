@@ -1,0 +1,27 @@
+FRAPPE JUSTE — version portable (clé USB)
+==========================================
+
+Contenu
+-------
+FrappeJuste.exe      Le Compagnon : fonctionne dans tout Windows (Outlook, Word, navigateur…)
+frappe-juste.html    L'entraîneur : à ouvrir dans Edge ou Chrome (double-clic)
+
+Aucune installation. Copiez les deux fichiers sur la clé, dans un dossier FrappeJuste.
+
+Le Compagnon (FrappeJuste.exe)
+------------------------------
+Double-clic : une icône apparaît près de l'horloge.
+  - Abréviations      : ;oapi, ;bj, ;merci… puis Espace, Tab ou Entrée
+  - Quick Accent      : maintenir une lettre, puis Espace (ou flèches), relâcher pour insérer
+  - Palette           : Ctrl + Alt + P (caractères difficiles en un clic)
+  - Menu de l'icône   : palette, Quick Accent on/off, Pause, Recharger, Quitter
+
+Premier lancement : Windows peut afficher « Windows a protégé votre ordinateur »
+(le fichier n'est pas signé). Cliquez sur « Informations complémentaires »,
+puis « Exécuter quand même ».
+
+Mettre à jour vos abréviations
+------------------------------
+Dans frappe-juste.html : Abréviations → Exporter → Compagnon portable.
+Le fichier exporté remplace companion/FrappeJuste.ahk dans le dépôt GitHub ;
+la compilation produit alors un nouveau FrappeJuste.exe (onglet Releases).
